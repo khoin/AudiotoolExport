@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Audiotool MIDI Export</title>
+	<link href='./css/grid.bootstrap.min.css' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Rambla:400,700italic,700' rel='stylesheet' type='text/css'>
+	<script type="text/javascript" src="./libs/jsmidgen.js"></script>
+	<script type="text/javascript" src="./libs/FileSaver.min.js"></script>
+	<style>
+	::-webkit-scrollbar {
+		width: .7em; background: #333; border-radius: 5px;
+	}
+	::-webkit-scrollbar-thumb {
+		background: rgba(255,255,255,0.4);
+		border-radius: 5px; border: #333 solid 2px;
+	}
+	.main { 
+		background: #484848;
+		color: white;
+		font-family: 'Rambla', sans-serif;
+	}
+
+	#banner {
+		font-weight: 800; font-style: italic; 
+		font-size: 500%; text-align: center;
+		padding-top: 50px; padding-bottom: 50px;
+		text-shadow: #333 2px 2px, #222 4px 4px ;
+	}
+
+	h1 {
+		text-align: center; font-size: 300% !important;
+	}
+
+	#trackList {
+		border-left: 1px solid rgba(255,255,255,0.4);
+		margin-bottom: 25px;
+	}
+
+	#auth input[type="text"], #auth input[type="password"], #fileName {
+		background: transparent; color: #eee; width: 100%;
+		border: none; border-radius: 0px;  border-bottom: 2px solid #eee;
+		padding: 3px 15px; font-size: 125%;
+		margin: 2px auto;
+		transition: .25s all ease;
+	}
+
+	#auth input[type="text"]:focus, #auth input[type="password"]:focus, #fileName:focus {
+		outline: none;
+		box-shadow: #fff 0 0 0px 0px;
+	}
+
+	.btn {
+		margin: 10px auto; width: 100%;
+		background: #eee; color: #222; border-radius: 5px; 
+		border: none; padding: 3px 5px; font-size: 125%;
+		box-shadow: #333 0 5px 2px 0; transition: .25s all ease;
+	}
+
+	.btn.active {
+		background: #6f6;
+	}
+	.btn.active:hover {
+		background: #Fb6;
+	}
+
+	.btn:hover {
+		box-shadow: #333 0 3px 3px 0;
+	}
+
+	.btn:focus {
+		outline: none; box-shadow: none;
+	}
+
+	.tab {
+		background: rgba(255,255,255,0.6); color: #222; text-align: center; border-top-left-radius: 5px; border-top-right-radius: 5px;
+		font-size: 125%; cursor: pointer; transition: .25s all ease;
+	}
+	.tab:not(.active):hover {
+		background: rgba(255,255,255,0.8); 
+	}
+	.tab.active {
+		background: rgba(255,255,255,1); box-shadow: #333 0px -3px 5px 0; cursor: default;
+	}
+
+	#list {
+		height: 200px; border-radius: 5px; border-top-left-radius: 0; border-top-right-radius:0;
+		border: 5px white solid;
+		background: #333; overflow-y: scroll; overflow-x:hidden;
+		box-shadow: #333 0 4px 3px 0;
+	}
+	#list li {
+		list-style: none; background: rgba(255,255,255,0.1);
+		margin:2px 0px; cursor: pointer;
+		padding:2px 10px;
+		transition: .2s all ease;
+	}
+	#list li:hover {
+		background: rgba(255,255,255,0.3);
+	}
+
+	#timeline {
+		height: 500px; margin: 10px auto; overflow-y: scroll;
+		background: #333; position: relative; border-radius: 5px;
+	}
+
+	#timeline div {
+		color: #222; position: absolute; height: 25px; border: rgba(20,20,20, 0.8) 1px solid; box-sizing: border-box;
+		white-space: nowrap; text-overflow: ellipsis; overflow: hidden; padding: 0 3px;
+		transition: .2s all ease; cursor: pointer;
+	}
+	#timeline div.active {
+		border: #222 2px dotted; cursor: no-drop;
+	}
+	#timeline div:hover {
+		opacity: 0.8;
+	}	
+
+	#saveBtn {
+		font-size:175%; padding: 30px;
+	}
+	#saveWrapper {
+		margin-top: 50px; margin-bottom: 50px;
+	}
+
+	#fileName, #ext {
+		font-size: 250%;
+		margin: 10px auto;
+		border-bottom-width: 5px;
+	}
+	#ext {
+		padding: 3px 15px;
+	}
+	</style>
+</head>
+<body>
+<div class="col-md-12 main">
+	<div id="banner" class="col-md-12">
+			AUDIOTOOL MIDI EXPORT
+	</div>
+	<div id="firstSteps" class="col-md-12">
+		<div id="auth" class="col-md-6">
+			<h1>AUTHENTICATE</h1>
+			<div class="col-md-4 col-md-offset-4">
+				<form id="login">
+					<input id="uname" name="username" type="text" placeholder="Username"><br>
+					<input id="passwd" name="password" type="password" placeholder="Password"><br>
+					<input id="loginBtn" class="btn" type="button" value="LOGIN">
+				</form>
+			</div>
+		</div>
+		<div id="trackList"class="col-md-6">
+			<h1>CHOOSE TRACK</h1>
+			<div class="col-md-6 col-md-offset-3">
+				<div id="allBtn" class="active tab col-md-6" >PUBLISHED</div>
+				<div id="draftBtn" class="tab col-md-6">DRAFTS</div><br>
+				<div id="list">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12" style="text-align:center;">
+		<h1> CHOOSE REGIONS TO EXPORT </h1>	
+	</div>
+	<div id="timeline" class="col-md-12">
+
+	</div>
+	<br>
+	<div id="output" class="col-md-12">
+		<div id="saveWrapper" class="col-md-4 col-md-offset-4">
+			<div class="col-md-10">
+				<input id="fileName" type="text" value="" placeholder="fileName">
+			</div>
+			<div id="ext" class="col-md-2">
+				.MID
+			</div>
+			<input id="saveBtn" class="btn" type="button" value="SAVE MIDI">
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+var UI = (function() {
+	var d = document, _ = this;
+	var loginBtn = d.getElementById("loginBtn");
+	var listDiv = d.getElementById("list");
+	var fnField = d.getElementById("fileName");
+
+	this.shakeElement = function(el) {
+		var k = 20;
+		(function __t() {
+			el.style.transform = "translateX("+ (Math.cos(Math.floor(k/5)*Math.PI)*25)+"px)";
+			k--; 
+			if(k>0) { requestAnimationFrame(__t); } else {el.style.transform = "translateX(0)";}
+		})();
+	}
+
+	this.displayError = function(text) {
+		var el = d.createElement("div"), els = el.style;
+		els.position = "fixed";
+		els.color = "white"; els.background = "#f44"; els.padding = "10px 30px"; els.fontSize = "20px"; els.width = "100%"; els.opacity = 0.8;
+		els.top = els.left = 0;
+		el.textContent = text;
+		d.body.appendChild(el);
+		setTimeout( function() { d.body.removeChild(el); }, 2000);
+	}
+
+	this.loginBtnLogOut = function() { loginBtn.value = "LOGOUT?"; }
+	this.loginBtnLoggedIn = function() { loginBtn.value = "LOGGED IN"; }
+
+	this.showLoggedIn = function() { console.log("show logged in")
+		d.getElementById("uname").value = User.getUsername();
+		loginBtn.value = "LOGGED IN";
+		loginBtn.classList.add( "active" ); 
+		loginBtn.removeEventListener("click", User.authenticate); 
+		loginBtn.addEventListener("mouseover", _.loginBtnLogOut);
+		loginBtn.addEventListener("mouseout", _.loginBtnLoggedIn);
+		loginBtn.addEventListener("click", User.logOut);
+		_.listAll();
+	}
+
+	this.showLoggedOut = function() {
+		d.getElementById("uname").value = "";
+		loginBtn.value = "LOGIN";
+		loginBtn.classList.remove( "active" ); 
+		loginBtn.removeEventListener("click", User.logOut);
+		loginBtn.removeEventListener("mouseover", _.loginBtnLogOut);
+		loginBtn.removeEventListener("mouseout", _.loginBtnLoggedIn);
+		loginBtn.addEventListener("click",User.authenticate);
+	}
+
+	this.clearList = function() {
+		listDiv.innerHTML = "";
+	}
+
+	this.formatName = function(title,key,duration) {
+		var wew = Math.round((duration/1000)%60) > 9 ? "" : "0";
+		return "["+ Math.floor((duration/1000)/60) + ":" + wew + Math.floor((duration/1000)%60) +"] [" +key+ "] " + title;
+	}
+
+	this.listAll = function(n) { console.log("list all"); 
+		if( !User.isLoggedIn() ) { console.log(User.isLoggedIn());
+			list.innerHTML = "<li> You must log in first! </li>"; _.shakeElement(loginBtn); return;
+		}
+		_.clearList();
+		if (n !== 1) { DraftList.toggleState(0); DraftList.fetchList(); }
+		d.querySelectorAll("#trackList .tab")[0].classList.add("active");
+		d.querySelectorAll("#trackList .tab")[1].classList.remove("active");
+	}
+
+	this.listDrafts = function(n) {
+		if( !User.isLoggedIn() ) {
+			list.innerHTML = "<li> You must log in first! </li>"; _.shakeElement(loginBtn); return;
+		}
+		_.clearList();
+		if (n !== 1) { DraftList.toggleState(1); DraftList.fetchList();  }
+		d.querySelectorAll("#trackList .tab")[1].classList.add("active");
+		d.querySelectorAll("#trackList .tab")[0].classList.remove("active");
+	}
+
+	this.loadList = function(state, list) { console.log("load list");
+		_.clearList();
+
+		//Insert list
+		if( state === 0 ) { _.listAll(1) } else { _.listDrafts(1); }
+		list.forEach( function(track) {
+			var item = d.createElement("li");
+			item.textContent = _.formatName(track.title, track.key, track.duration);
+			item.addEventListener("click", function() {
+				App.fetchJSON(track.key);
+				fnField.value = User.getUsername()+"-"+track.title;
+			});
+			listDiv.appendChild(item);
+		})
+	};
+
+	this.getFileName = function() {
+		return fnField.value;
+	}
+
+	this.saveMIDIDisplay = function() {
+		if( _.getFileName() == "" ) { _.shakeElement(fnField); return}
+		App.saveMIDI();
+	}
+
+	return this;
+})();
+
+var User = (function() {
+
+	var _ = this;
+
+	this.onFail = function(txt) {
+		UI.displayError(txt);
+	}
+
+	this.onSuccess = function() { console.log("user on success");
+		UI.showLoggedIn();
+		//Clear fields
+		document.getElementById("passwd").value = "";
+	}
+
+	this.isLoggedIn = function() { console.log("is logged in?")
+		if( _.getAuthKey() && _.getUsername() ) {
+			return true;
+		} else { return false; }
+	}
+
+	this.getAuthKey = function() {
+		return localStorage.AMELoginKey;
+	}
+
+	this.getUsername = function() {
+		return localStorage.AMELoginUsername;
+	}
+
+	this.checkAuth = function() { console.log("checkAuth");
+		if(_.isLoggedIn()) {
+			UI.showLoggedIn(); 
+		} else {
+			UI.showLoggedOut();
+		}
+	}
+
+	this.logOut = function() {
+		console.log("User logged out.");
+		window.localStorage.removeItem("AMELoginKey");
+		window.localStorage.removeItem("AMELoginUsername");
+		UI.showLoggedOut();
+	}
+
+	this.authenticate = function() { console.log("authing");
+		var form = new FormData( document.getElementById("login") );
+		var parser = new DOMParser();
+
+		//Fetch cridentials
+		fetch("https://api.audiotool.com/users/login/", {
+			method: "POST", body: form
+		}).then( function(response) {
+			return response.text();
+		}).then( function(body) {
+			
+			var response = parser.parseFromString(body, "text/xml");
+			if(response.getElementsByTagName("error").length !== 0) { 
+				if( response.getElementsByTagName("error")[0].getAttribute("id") == 4096 ) _.onFail("Invalid Username/Password.");
+				return;
+			}
+			
+			window.localStorage.AMELoginUsername = document.getElementById("uname").value;
+			window.localStorage.AMELoginKey = response.getElementsByTagName("key")[0].innerHTML;
+
+			_.onSuccess();
+		}).catch( function(e) {
+			_.onFail("Something happened D: " + e.message);
+			throw new Error(e);
+		});
+		
+		return this;
+	}
+
+	return this;
+})();
+
+var DraftList = (function() {
+	//0:Published Tracks , 1: All Tracks + Drafts
+	var _ = this;
+	var state = 0; 
+
+	this.toggleState = function(x) {
+		state = (x === 0)? 0 : 1;
+		return state;
+	}
+
+	this.onDLSuccess = function(x) { console.log("DraftList Success");
+		UI.loadList(state, x);
+	}
+
+	this.fetchList = function() {
+		var parser = new DOMParser();
+		var tracksOut = [];
+
+		var session = User.getAuthKey();
+		var username = User.getUsername();
+		var basedURI = (state === 0)? "https://api.audiotool.com/browse/user/"+username+"/tracks/?limit=128" : "https://api.audiotool.com/tracks/mine/?limit=128";
+		fetch(basedURI+"&X-Cular-Session="+session)
+			.then( function(response) {
+				return response.text();
+			}).then( function(body) {
+
+				var response = parser.parseFromString(body, "text/xml");
+
+				if(state === 0 ) {
+					//All
+					var items = response.getElementsByTagName("track");
+					[].forEach.call(items, function(it) {
+						var obj = {
+							title: it.getAttribute("title"),
+							key: it.getAttribute("key"),
+							duration: parseInt(it.getAttribute("duration"))
+						}
+						tracksOut.push(obj);
+					});
+
+				} else {
+					//Draft
+					var keys = response.querySelectorAll("track>key");
+					var titles = response.querySelectorAll("track>name");
+					var durations = response.querySelectorAll("track>duration");
+					var pubes = response.querySelectorAll("track>published");
+					[].forEach.call(keys, function(it, indx) {
+						if(pubes[indx].textContent == "true") return;
+						var obj = {
+							title: titles[indx].textContent,
+							key: keys[indx].textContent,
+							duration: parseInt(durations[indx].textContent)
+						}
+						tracksOut.push(obj);
+					});
+
+				}
+				DraftList.onDLSuccess(tracksOut);
+			}).catch( function(e) {
+				UI.displayError("Something went wrong: " + e.message);
+			});
+
+	}
+	return this;
+})();
+
+var TimelineView = (function() {
+
+	var d = document, _ = this, tl = d.getElementById("timeline");
+
+	this.clearView = function() {
+		tl.innerHTML = "";
+	}
+
+	this.toggleRegionDisplay = function(key, state) {
+		var regions = d.querySelectorAll('div[data-region-name="'+key+'"]');
+		[].forEach.call(regions, function(item) {
+			if(state) {
+				item.classList.add("active");
+			} else {	
+				item.classList.remove("active");
+			}
+		});
+	}
+
+	this.viewData = function(json) {
+		_.clearView();
+		var total = json.timeInfo.durationInTicks;
+		var k = 0;
+
+		for (j = 0 ; j < json.timeline.tracks.length; j++) {
+			//Iterating through each channel
+			if ( json.timeline.tracks[j].type == 1 ) {
+				var block = json.timeline.tracks[j].content.items;
+				for (i = 0 ; i < block.length ; i++  ) {
+					//Through each block
+					var blockDOM = d.createElement("div"),
+						bs 		 = blockDOM.style;
+
+					var regionKey = block[i].contentBox
+					//Display
+					blockDOM.appendChild(d.createTextNode(block[i].name));
+					blockDOM.setAttribute("data-region-name", regionKey);
+					bs.backgroundColor = "#"+block[i].color.toString(16);
+					bs.left = (block[i].position/total)*100 + "%";
+					bs.top = 10 + (k*25) + "px";
+					bs.width = (block[i].duration/total)*100 + "%";
+
+					//Listen
+					(function(z,k) { 
+						z.addEventListener("click", function() { 
+							var regionState = App.toggleRegion(k);
+							TimelineView.toggleRegionDisplay(k, regionState);
+						})
+					})(blockDOM, regionKey);
+
+					tl.appendChild(blockDOM);
+				}
+				k++;
+			}
+		}
+			
+	}
+
+	return this;
+})();
+
+var App = (function() {
+	var d = document, _ = this;
+	var currentJSON;
+	var regions = [];
+
+	this.setCurrentJSON = function(x) {
+		regions = [];
+		if(x instanceof Object) currentJSON = x;
+	}
+	this.getCurrentJSON = function() {
+		return currentJSON;
+	}
+
+	this.toggleRegion = function(regionKey) {
+		if( regions.indexOf(regionKey) == -1 ) {
+			regions.push(regionKey);
+			return true;
+		} else {
+			regions.splice(regions.indexOf(regionKey), 1);
+			return false;
+		}
+	}
+
+	this.getRegions = function() {
+		return regions;
+	}
+
+	this.fetchJSON = function(key) {
+		var session = User.getAuthKey();
+		fetch("https://api.audiotool.com/track/"+key+"/session.json?X-Cular-Session="+session)
+			.then( function( response ) {
+				return response.json()
+			}).then ( function(json) {
+				_.setCurrentJSON(json);
+				TimelineView.viewData(json);
+			}).catch( function(e) {
+				UI.displayError("Something went wrong :O " + e.message);
+				throw new Error(e);
+			});
+	}
+
+	this.saveMIDI = function() {
+		if( regions.length == 0 ) {
+			UI.displayError("You must choose at least one region to export!"); 
+			return;
+		}
+
+		var file = new Midi.File();
+
+		//Set Tempo
+		file.addTrack().setTempo(currentJSON.timeInfo.bpm);
+
+		//Through Each Audiotool Track
+		for( var i = 0; i < regions.length; i++ ) {
+			var audiotoolTrack = currentJSON.timeline.contents.findIndex( function(el) { return el.contentBox==regions[i];} );
+
+			var thisRegion = currentJSON.timeline.contents[audiotoolTrack];
+			
+			var events = [];
+
+			//Through Each Note
+			for( var j = 0; j < thisRegion.items.length; j++) { 
+				var note = thisRegion.items[j];
+				//Note ON
+				events.push({
+					type: Midi.Event.NOTE_ON,
+					channel: i,
+					param1: Midi.Util.ensureMidiPitch(note.note),
+					param2: parseInt(note.velocity*127),
+					time: note.position,
+				});
+				//Note OFF
+				events.push({
+					type: Midi.Event.NOTE_OFF,
+					channel: i,
+					param1: Midi.Util.ensureMidiPitch(note.note),
+					param2: parseInt(note.velocity*127),
+					time: note.position + note.duration,
+				});
+			}
+
+			//Sort Events
+			events.sort(function(a, b) {
+			  return a.time - b.time;
+			});
+			//Relative Time
+			events = events.map( function(it, ind, arr) { 
+				var prev = (arr[ind-1] !== undefined)? arr[ind-1].time : 0;
+				return new Midi.Event({
+					type: it.type,
+					channel: it.channel,
+					param1: it.param1,
+					param2: it.param2,
+					time: it.time - prev,
+				});
+			});
+			//Add to Track
+			file.addTrack( new Midi.Track({events: events}) );
+		}
+
+		saveAs( new Blob([ new Uint8Array([].map.call(file.toBytes(), function(c) { return c.charCodeAt(0); })).buffer], {type: "application/x-midi"}) , UI.getFileName()+".mid" );
+	}
+
+	this.init = function() {
+		User.checkAuth();
+		d.getElementById("allBtn").addEventListener("click", UI.listAll);
+		d.getElementById("draftBtn").addEventListener("click", UI.listDrafts);
+		d.getElementById("saveBtn").addEventListener("click", UI.saveMIDIDisplay);
+	}
+	return this;
+})();
+
+App.init();
+
+</script>
+</body>
+</html>
