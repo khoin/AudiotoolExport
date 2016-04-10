@@ -10,149 +10,240 @@
 	<script type="text/javascript" src="./libs/jsmidgen.js"></script>
 	<script type="text/javascript" src="./libs/FileSaver.min.js"></script>
 	<style>
-	::selection {
-	    background: hsla(227, 50%, 80%, 0.8);;
-	}
-	::-webkit-scrollbar {
-		width: .7em; background: hsla(156, 45%, 80%, 1);
-	}
-	::-webkit-scrollbar-thumb {
-		background: hsla(227, 50%, 60%, 1);
-		border-radius: 5px; border: hsla(156, 45%, 80%, 1) solid 2px;
-	}
-	input:-webkit-autofill {
-	    box-shadow: hsla(227, 50%, 60%, 1) 0 0 0 18px inset;
-	    -webkit-text-fill-color: hsla(227, 50%, 60%, 1);
-	}
-	::-webkit-input-placeholder {
-   		color: hsla(227, 50%, 30%, 0.7);
+	::selection {    background: hsla(227, 50%, 80%, 0.8); }
+
+	::-webkit-scrollbar
+	{
+		width: .7em; 
+		background: hsla(156, 45%, 80%, 1);
 	}
 
-	html,.main { 
-		background: hsla(156, 45%, 80%, 1);
-		color: hsla(227, 50%, 60%, 1);
+	::-webkit-scrollbar-thumb
+	{
+		background 	: hsla(227, 50%, 60%, 1);
+		border 		: hsla(156, 45%, 80%, 1) solid 2px;
+		border-radius: 5px;
+	}
+
+	input:-webkit-autofill
+	{
+	    box-shadow 				: hsla(227, 50%, 60%, 1) 0 0 0 18px inset;
+	    -webkit-text-fill-color : hsla(227, 50%, 60%, 1);
+	}
+
+	::-webkit-input-placeholder { color: hsla(227, 50%, 30%, 0.7); }
+
+	html,
+	.main
+	{ 
+		background 	: hsla(156, 45%, 80%, 1);
+		color 		: hsla(227, 50%, 60%, 1);
 		font-family: 'Josefin Sans', sans-serif;
 	}
 
-	#banner {
-		font-weight: 800;
-		font-size: 350%; text-align: center;
-		padding-top: 50px; padding-bottom: 50px;
-		text-shadow: hsla(227, 50%, 50%, 0.8) 0px 2px, hsla(227, 50%, 40%, 0.6) 0px 4px ;
+	#banner
+	{
+		font-weight	: 800;
+		font-size  	: 350%; 
+		text-align	: center;
+		padding-top 	: 50px;
+		padding-bottom	: 50px;
+		text-shadow	: hsla(227, 50%, 50%, 0.8) 0px 2px,
+					  hsla(227, 50%, 40%, 0.6) 0px 4px;
 	}
 
-	h1 {
-		text-align: center; font-size: 250%; 
-		text-shadow: hsla(227, 50%, 50%, 0.8) 0px 1px, hsla(227, 50%, 40%, 0.6) 0px 2px ;
+	h1
+	{
+		text-align: center;
+		font-size: 250%; 
+		text-shadow: hsla(227, 50%, 50%, 0.8) 0px 1px,
+					 hsla(227, 50%, 40%, 0.6) 0px 2px;
 	}
 
-	#auth input[type="text"], #auth input[type="password"], #fileName {
-		background: transparent; color: hsla(227, 50%, 40%, 1); width: 100%;
-		border: none; border-radius: 0px;  border-bottom: 2px solid hsla(227, 50%, 60%, 1);
-		padding: 3px 15px; font-size: 125%;
-		margin: 2px auto;
-		transition: .25s all ease;
+	#auth input[type="text"], 
+	#auth input[type="password"], 
+	#fileName
+	{
+		width 			: 100%;
+		font-size 		: 125%;
+		background 		: transparent; 
+		color 			: hsla(227, 50%, 40%, 1);
+		border 			: none;
+		border-bottom 	: 2px solid hsla(227, 50%, 60%, 1);
+		border-radius 	: 0;  
+		padding 		: 3px 15px; 
+		margin 			: 2px auto;
+		transition 		: .25s all ease;
 	}
 
-	#auth input[type="text"]:focus, #auth input[type="password"]:focus, #fileName:focus {
+	#auth input[type="text"]:focus,
+	#auth input[type="password"]:focus,
+	#fileName:focus
+	{
 		outline: none;
 	}
 
-	.ccirc { background: hsla(227, 50%, 60%, 1); height: 1px; 
-		border-left: 15px hsla(156, 45%, 80%, 1) solid;
+	.ccirc
+	{ 
+		height 		: 1px;
+		background 	: hsla(227, 50%, 60%, 1);  
+		border-left : 15px hsla(156, 45%, 80%, 1) solid;
 		border-right: 15px hsla(156, 45%, 80%, 1) solid;
 	}
 
-	.arrowdown { margin-top: 49.5px; margin-bottom: 49.5px; }
-	.arrowdown:before { content: "➤"; position: absolute; left:50%; transform: rotateZ(90deg);
-		background: hsla(227, 50%, 60%, 1); box-shadow: hsla(227, 50%, 40%, 1) 1px 0px; border-radius:50%;
-		width:50px; height:50px; 
-		margin-left:-25px; margin-top:-25px;
-		text-align:center; line-height: 16.67px; padding:16.67px;
-		text-shadow: hsla(156, 45%, 50%, 1) 2px 0px; color: hsla(156, 45%, 80%, 1); 
+	.arrowdown { 	margin-top: 49.5px; margin-bottom: 49.5px; }
+	.arrowdown:before
+	{ 
+		content 	: "➤";
+		transform 	: rotateZ(90deg);
+		position 	: absolute;
+		left 		: 50%; 
+		background 	: hsla(227, 50%, 60%, 1);
+		box-shadow 	: hsla(227, 50%, 40%, 1) 1px 0px;
+		text-shadow : hsla(156, 45%, 50%, 1) 2px 0px;
+		text-align	: center;
+		color 		: hsla(156, 45%, 80%, 1); 
+		border-radius:50%;
+		width 		: 50px;
+		height 		: 50px; 
+		margin-left	:-25px;
+		margin-top	:-25px;
+		line-height	: 16.67px;
+		padding 	: 16.67px;
 	}
 
-	.slashes { margin-top: 15px; margin-bottom: 15px; }
-	.slashes:before { content: "///"; font-size: 30px;
-		line-height: 30px; height: 30px; width: 30px;
-		margin-left:-15px; margin-top:-15px;
-		position: absolute; left:50%; text-align: center;
+	.slashes { 		margin-top: 15px; margin-bottom: 15px; }
+	.slashes:before
+	{ 
+		content 	: "///";
+		position 	: absolute;
+		left 		: 50%;
+		text-align	: center;
+		font-size 	: 30px;
+		line-height : 30px;
+		width 		: 30px;
+		height 		: 30px; 
+		margin-left	:-15px;
+		margin-top	:-15px;
+		  
 	}
 
-	.btn {
-		margin: 10px auto; width: 100%;
-		background: hsla(227, 50%, 60%, 1); color: hsla(156, 45%, 80%, 1); border-radius: 5px; 
-		border: none; padding: 3px 5px; font-size: 125%; font-weight: bold;
-		box-shadow: hsla(227, 50%, 30%, 0.8) 0 3px; transition: .25s all ease;
+	.btn
+	{
+		margin 		: 10px auto; 
+		width 		: 100%;
+		background 	: hsla(227, 50%, 60%, 1);
+		color 		: hsla(156, 45%, 80%, 1);
+		box-shadow 	: hsla(227, 50%, 30%, 0.8) 0 3px;  
+		border 		: none;
+		border-radius:5px;
+		padding 	: 3px 5px; 
+		font-size 	: 125%; font-weight: bold;
+		transition 	: .25s all ease;
 	}
 
-	.btn:hover {
-		box-shadow: hsla(227, 50%, 30%, 0.9) 0 2px;
-	}
+	.btn:hover { 	box-shadow: hsla(227, 50%, 30%, 0.9) 0 2px;  }
 
 	.btn:focus {
-		outline: none; box-shadow: none;
+		outline		: none;
+		box-shadow	: none;
 	}
 
 	.tab {
-		background: hsla(227, 50%, 60%, 0.7); color: hsla(156, 45%, 80%, 1); text-align: center; border-top-left-radius: 5px; border-top-right-radius: 5px;
-		font-size: 125%; font-weight: bold; cursor: pointer; transition: .25s all ease;
+		background 	: hsla(227, 50%, 60%, 0.7);
+		color 		: hsla(156, 45%, 80%, 1);
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+		font-size 	: 125%;
+		font-weight : bold;
+		text-align 	: center;
+		cursor 		: pointer;
+		transition 	: .25s all ease;
 	}
-	.tab:not(.active):hover {
-		background: hsla(227, 50%, 60%, 0.9); 
+	.tab:not(.active):hover { 	background: hsla(227, 50%, 60%, 0.9); }
+	.tab.active 			{	background: hsla(227, 50%, 60%, 1); cursor: default; }
+
+	#list
+	{
+		height 			: 200px;
+		border-radius 	: 5px;
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+		border 			: hsla(227, 50%, 60%, 1) 5px  solid;
+		box-shadow 		: hsla(227, 50%, 40%, 1) 0 3px;
+		background 		: hsla(227, 50%, 30%, 1); 
+		overflow-y: scroll;
+		overflow-x: hidden;
+		
 	}
-	.tab.active {
-		background: hsla(227, 50%, 60%, 1); cursor: default; 
+	#list li
+	{
+		list-style 	: none;
+		background 	: rgba(255, 255, 255, 0.1);
+		color 		: hsla(227, 50%, 90%, 1);
+		margin 		: 2px 0px;
+		padding 	: 2px 10px;
+		font-family : monospace;
+		cursor 		: pointer;
+		transition 	: .2s all ease;
+	}
+	#list li:hover {	background: rgba(255,255,255,0.3); }
+
+	#timeline
+	{
+		height 		: 500px; 
+		background 	: hsla(227, 50%, 30%, 1);
+		position 	: relative;
+		margin 		: 10px auto;
+		border-radius: 5px;
+		overflow-y 	: auto;
 	}
 
-	#list {
-		height: 200px; border-radius: 5px; border-top-left-radius: 0; border-top-right-radius:0;
-		border: 5px hsla(227, 50%, 60%, 1) solid;
-		background: hsla(227, 50%, 30%, 1); 
-		overflow-y: scroll; overflow-x:hidden;
-		box-shadow: hsla(227, 50%, 40%, 1) 0 3px ;
+	#timeline div
+	{
+		color 		: #222;
+		position 	: absolute;
+		height 		: 25px;
+		border 		: rgba(20,20,20, 0.8) 0.5px solid;
+		box-sizing  : border-box;
+		white-space : nowrap;
+		text-overflow: ellipsis;
+		overflow 	: hidden;
+		padding 	: 0 3px;
+		font-family : monospace;
+		cursor 		: pointer;
+		transition 	: .2s all ease; 
 	}
-	#list li {
-		list-style: none; background: rgba(255,255,255,0.1); color: hsla(227, 50%, 90%, 1);
-		margin:2px 0px; cursor: pointer;
-		padding:2px 10px; font-family: monospace;
-		transition: .2s all ease;
+	#timeline div.active
+	{
+		border: #222 2px dotted;
+		cursor: no-drop;
 	}
-	#list li:hover {
-		background: rgba(255,255,255,0.3);
+	#timeline div:hover { 	opacity: 0.8; }	
+
+	#saveBtn
+	{
+		font-size	: 175%;
+		font-weight : 800;
+		padding 	: 30px; 
+	}
+	#saveWrapper
+	{
+		margin-top		: 50px;
+		margin-bottom	: 50px;
 	}
 
-	#timeline {
-		height: 500px; margin: 10px auto; overflow-y: auto;
-		background: hsla(227, 50%, 30%, 1); position: relative; border-radius: 5px;
-	}
-
-	#timeline div {
-		color: #222; position: absolute; height: 25px; border: rgba(20,20,20, 0.8) 0.5px solid; box-sizing: border-box;
-		white-space: nowrap; text-overflow: ellipsis; overflow: hidden; padding: 0 3px; font-family: monospace;
-		transition: .2s all ease; cursor: pointer;
-	}
-	#timeline div.active {
-		border: #222 2px dotted; cursor: no-drop;
-	}
-	#timeline div:hover {
-		opacity: 0.8;
-	}	
-
-	#saveBtn {
-		font-size: 175%; padding: 30px; font-weight: 800;
-	}
-	#saveWrapper {
-		margin-top: 50px; margin-bottom: 50px;
-	}
-
-	#fileName, #ext {
-		font-size: 250%;
-		margin: 10px auto;
+	#fileName,
+	#ext
+	{
+		font-size	: 250%;
+		margin 		: 10px auto;
 		border-bottom-width: 5px;
 	}
-	#ext {
-		padding: 3px 15px; text-align: center;
+	#ext
+	{
+		padding 	: 3px 15px;
+		text-align	: center;
 	}
 	</style>
 </head>
@@ -167,11 +258,11 @@
 			<h1>AUTHENTICATE</h1>
 				<form id="login" autocomplete="off">
 					<input id="uname" name="username" type="text" placeholder="Your Username" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><br>
-					<input id="passwd" name="password" type="password" placeholder="Password"><br>
+					<input id="password" name="password" type="password" placeholder="Password"><br>
 					<input id="loginBtn" class="btn" type="submit" value="LOG IN" onclick="void(0)">
 				</form>
 		</div>
-		<div class="ccirc arrowdown col-md-4 col-md-offset-4" ></div>
+		<div class="ccirc arrowdown col-md-4 col-md-offset-4"></div>
 		<div id="trackList"class="col-md-4 col-md-offset-4">
 			<h1>CHOOSE TRACK</h1>
 				<div id="allBtn" class="active tab col-md-6 col-xs-6" >PUBLISHED</div>
@@ -201,253 +292,246 @@
 </div>
 
 <script type="text/javascript">
-var UI = (function() {
-	var d = document, _ = this;
-	var loginBtn = d.getElementById("loginBtn");
-	var listDiv = d.getElementById("list");
-	var fnField = d.getElementById("fileName");
+var d = document;
+var UI = UI || {};
 
-	this.shakeElement = function(el) {
+	UI.buttonLogin 	= d.getElementById("loginBtn");
+	UI.listDiv 		= d.getElementById("list");
+	UI.fieldFileName= d.getElementById("fileName");
+	UI.tabPublished = d.querySelectorAll("#trackList .tab")[0];
+	UI.tabDrafts 	= d.querySelectorAll("#trackList .tab")[1];
+
+	UI.shakeElement = function(el) {
 		var k = 20;
-		(function __t() {
-			el.style.transform = "translateX("+ (Math.cos(Math.floor(k/5)*Math.PI)*25)+"px)";
-			k--; 
-			if(k>0) { requestAnimationFrame(__t); } else {el.style.transform = "translateX(0)";}
+		(function _() {
+			el.style.transform = "translateX("+ (Math.cos(Math.floor(k/5)*Math.PI)*15) +"px)"; 
+			if ( k-- > 0 ) 
+					{ requestAnimationFrame(_); } 
+			else 	{ el.style.transform = "translateX(0)"; }
 		})();
 	}
 
-	this.displayError = function(text) {
-		var el = d.createElement("div"), els = el.style;
-		els.position = "fixed";
-		els.color = "white"; els.background = "#f44"; els.padding = "10px 30px"; els.fontSize = "20px"; els.width = "100%"; els.opacity = 0.8;
-		els.top = els.left = 0;
-		el.textContent = text;
+	UI.displayError = function(text) {
+		var el = d.createElement("div"), 
+			els = el.style;
+			els.position = "fixed";
+			els.color = "white"; els.background = "#f44"; els.padding = "10px 30px"; els.fontSize = "20px"; els.width = "100%"; els.opacity = 0.8;
+			els.top = els.left = 0;
+			el.textContent = text;
 		d.body.appendChild(el);
 		setTimeout( function() { d.body.removeChild(el); }, 2000);
 	}
 
-	this.showLoggedIn = function() { 
+	UI.showLoggedIn = function() { 
 		d.getElementById("uname").value = User.getUsername();
-		loginBtn.value = "LOG OUT";
-		loginBtn.removeEventListener("click", User.authenticate); 
-		loginBtn.addEventListener("click", User.logOut);
-		_.listAll();
+		UI.buttonLogin.value = "LOG OUT";
+		UI.buttonLogin.removeEventListener("click", User.authenticate); 
+		UI.buttonLogin.addEventListener("click", User.logOut);
+		UI.listAll();
 	}
 
-	this.showLoggedOut = function() {
+	UI.showLoggedOut = function() {
 		d.getElementById("uname").value = "";
-		loginBtn.value = "LOG IN";
-		loginBtn.removeEventListener("click", User.logOut);
-		loginBtn.addEventListener("click", User.authenticate);
+		UI.buttonLogin.value = "LOG IN";
+		UI.buttonLogin.removeEventListener("click", User.logOut);
+		UI.buttonLogin.addEventListener("click", User.authenticate);
 	}
 
-	this.clearList = function() {
-		listDiv.innerHTML = "";
+	UI.clearList = function() {
+		UI.listDiv.innerHTML = "";
 	}
 
-	this.formatName = function(title,key,duration) {
+	UI.formatName = function(title,key,duration) {
 		var wew = Math.round((duration/1000)%60) > 9 ? "" : "0";
 		return "["+ Math.floor((duration/1000)/60) + ":" + wew + Math.floor((duration/1000)%60) +"] [" +key+ "] " + title;
 	}
 
-	this.listAll = function(n) { console.log("list all"); 
-		if( !User.isLoggedIn() ) { console.log(User.isLoggedIn());
-			list.innerHTML = "<li> You must log in first! </li>"; _.shakeElement(loginBtn); return;
-		}
-		_.clearList();
-		if (n !== 1) { DraftList.toggleState(0); DraftList.fetchList(); }
-		d.querySelectorAll("#trackList .tab")[0].classList.add("active");
-		d.querySelectorAll("#trackList .tab")[1].classList.remove("active");
-	}
-
-	this.listDrafts = function(n) {
+	UI.listAll = function(n) { 
 		if( !User.isLoggedIn() ) {
-			list.innerHTML = "<li> You must log in first! </li>"; _.shakeElement(loginBtn); return;
+			list.innerHTML = "<li> You must log in first! </li>";
+			UI.shakeElement(UI.buttonLogin); return;
 		}
-		_.clearList();
-		if (n !== 1) { DraftList.toggleState(1); DraftList.fetchList();  }
-		d.querySelectorAll("#trackList .tab")[1].classList.add("active");
-		d.querySelectorAll("#trackList .tab")[0].classList.remove("active");
+		UI.clearList();
+		if (n !== 1) { DraftFetcher.toggleState(0); DraftFetcher.fetchList(); }
+		UI.tabPublished.classList.add("active");
+		UI.tabDrafts.classList.remove("active");
 	}
 
-	this.loadList = function(state, list) { console.log("load list");
-		_.clearList();
+	UI.listDrafts = function(n) {
+		if( !User.isLoggedIn() ) {
+			list.innerHTML = "<li> You must log in first! </li>";
+			UI.shakeElement(UI.buttonLogin); return;
+		}
 
-		//Insert list
-		if( state === 0 ) { _.listAll(1) } else { _.listDrafts(1); }
+		UI.clearList();
+		if (n !== 1) { DraftFetcher.toggleState(1); DraftFetcher.fetchList();  }
+		UI.tabDrafts.classList.add("active");
+		UI.tabPublished.classList.remove("active");
+	}
+
+	UI.displayList = function(state, list) { 
+		UI.clearList();
+
+		// State 0 : Published
+		// State 1 : Drafts
+		if( state === 0 ) { UI.listAll(1) } else { UI.listDrafts(1); }
 		list.forEach( function(track) {
 			var item = d.createElement("li");
-			item.textContent = _.formatName(track.title, track.key, track.duration);
+			item.textContent = UI.formatName(track.title, track.key, track.duration);
 			item.addEventListener("click", function() {
 				App.fetchJSON(track.key);
-				fnField.value = User.getUsername()+"-"+track.title;
+				UI.fieldFileName.value = User.getUsername()+"-"+track.title;
 			});
-			listDiv.appendChild(item);
+			UI.listDiv.appendChild(item);
 		})
 	};
 
-	this.getFileName = function() {
-		return fnField.value;
+	UI.getFileName = function() {
+		return UI.fieldFileName.value;
 	}
 
-	this.saveMIDIDisplay = function() {
-		if( _.getFileName() == "" ) { _.shakeElement(fnField); return}
+	UI.saveMIDIDisplay = function() {
+		if( UI.getFileName() == "" ) { UI.shakeElement(UI.fieldFileName); return; }
 		App.saveMIDI();
 	}
 
-	return this;
-})();
 
-var User = (function() {
+var User = User || {};
 
-	var _ = this;
-
-	this.onFail = function(txt) {
-		UI.displayError(txt);
-	}
-
-	this.onSuccess = function() { 
+	User.onSuccess = function() { 
 		UI.showLoggedIn();
-		//Clear fields
-		document.getElementById("passwd").value = "";
+		d.getElementById("password").value = "";
 	}
 
-	this.isLoggedIn = function() { console.log("is logged in?")
-		if( _.getAuthKey() && _.getUsername() ) {
-			return true;
-		} else { return false; }
+	User.isLoggedIn = function() {
+		return (User.getAuthKey() && User.getUsername() && true);
 	}
 
-	this.getAuthKey = function() {
+	User.getAuthKey = function() {
 		return localStorage.AMELoginKey;
 	}
 
-	this.getUsername = function() {
+	User.getUsername = function() {
 		return localStorage.AMELoginUsername;
 	}
 
-	this.checkAuth = function() { 
-		if(_.isLoggedIn()) {
+	User.checkAuth = function() { 
+		if( User.isLoggedIn() ) {
 			UI.showLoggedIn(); 
 		} else {
 			UI.showLoggedOut();
 		}
 	}
 
-	this.logOut = function() {
+	User.logOut = function() {
 		window.localStorage.removeItem("AMELoginKey");
 		window.localStorage.removeItem("AMELoginUsername");
 		UI.showLoggedOut();
 	}
 
-	this.authenticate = function(e) { 
-
-		var form = new FormData( document.getElementById("login") );
+	User.authenticate = function(e) { 
+		var form = new FormData( d.getElementById("login") );
 		var parser = new DOMParser();
 
-		//Fetch cridentials
+		// Fetch credentials
 		fetch("https://api.audiotool.com/users/login/", {
-			method: "POST", body: form
+			method: "POST",
+			body: form
 		}).then( function(response) {
 			return response.text();
 		}).then( function(body) {
 			
 			var response = parser.parseFromString(body, "text/xml");
-			if(response.getElementsByTagName("error").length !== 0) { 
-				if( response.getElementsByTagName("error")[0].getAttribute("id") == 4096 ) _.onFail("Invalid Username/Password.");
+			if 		( response.getElementsByTagName("error").length !== 0 ) { 
+				if 	( response.getElementsByTagName("error")[0].getAttribute("id") == 4096 ) UI.displayError("Invalid Username or Password");
 				return;
 			}
 			
-			window.localStorage.AMELoginUsername = response.getElementsByTagName("key")[1].innerHTML;
-			window.localStorage.AMELoginKey = response.getElementsByTagName("key")[0].innerHTML;
+			// Assign sessionKey and username
+			window.localStorage.AMELoginUsername 	= response.getElementsByTagName("key")[1].innerHTML;
+			window.localStorage.AMELoginKey 		= response.getElementsByTagName("key")[0].innerHTML;
 
-			_.onSuccess();
+			User.onSuccess();
+
 		}).catch( function(e) {
-			_.onFail("Something happened D: " + e.message);
+			UI.displayError("Oh no! Something happened: " + e.message);
 			throw new Error(e);
 		});
-		
-		return this;
 	}
 
-	return this;
-})();
 
-var DraftList = (function() {
-	//0:Published Tracks , 1: All Tracks + Drafts
-	var _ = this;
-	var state = 0; 
+var DraftFetcher = DraftFetcher || {};
 
-	this.toggleState = function(x) {
+	// State 0: Published Tracks
+	// State 1: All Tracks + Drafts
+	
+	DraftFetcher.state = 0; 
+
+	DraftFetcher.toggleState = function(x) {
 		state = (x === 0)? 0 : 1;
 		return state;
 	}
 
-	this.onDLSuccess = function(x) { 
-		UI.loadList(state, x);
-	}
-
-	this.fetchList = function() {
+	DraftFetcher.fetchList = function() {
 		var parser = new DOMParser();
 		var tracksOut = [];
 
-		var session = User.getAuthKey();
-		var username = User.getUsername();
-		var basedURI = (state === 0)? "https://api.audiotool.com/browse/user/"+username+"/tracks/?limit=128" : "https://api.audiotool.com/tracks/mine/?limit=128";
-		fetch(basedURI+"&X-Cular-Session="+session)
+		var basedURI = (state === 0)? 
+						"https://api.audiotool.com/browse/user/"+ User.getUsername() +"/tracks/?limit=128" : 
+						"https://api.audiotool.com/tracks/mine/?limit=128";
+		
+		fetch( basedURI+"&X-Cular-Session="+ User.getAuthKey() )
 			.then( function(response) {
 				return response.text();
 			}).then( function(body) {
 
 				var response = parser.parseFromString(body, "text/xml");
 
-				if(state === 0 ) {
-					//All
-					var items = response.getElementsByTagName("track");
-					[].forEach.call(items, function(it) {
+				if(state === 0 ) { //All
+
+					[].forEach.call( response.getElementsByTagName("track"), function(it) {
 						var obj = {
-							title: it.getAttribute("title"),
-							key: it.getAttribute("key"),
-							duration: parseInt(it.getAttribute("duration"))
+							title 	: it.getAttribute("title"),
+							key 	: it.getAttribute("key"),
+							duration: it.getAttribute("duration")
 						}
 						tracksOut.push(obj);
 					});
 
-				} else {
-					//Draft
-					var keys = response.querySelectorAll("track>key");
-					var titles = response.querySelectorAll("track>name");
-					var durations = response.querySelectorAll("track>duration");
-					var pubes = response.querySelectorAll("track>published");
+				} else { //Draft
+
+					var keys 		= response.querySelectorAll("track>key");
+					var titles 		= response.querySelectorAll("track>name");
+					var durations 	= response.querySelectorAll("track>duration");
+					var pubes 		= response.querySelectorAll("track>published");
 					[].forEach.call(keys, function(it, indx) {
 						if(pubes[indx].textContent == "true") return;
 						var obj = {
-							title: titles[indx].textContent,
-							key: keys[indx].textContent,
-							duration: parseInt(durations[indx].textContent)
+							title 	: titles[indx].textContent,
+							key 	: keys[indx].textContent,
+							duration: durations[indx].textContent
 						}
 						tracksOut.push(obj);
 					});
 
 				}
-				DraftList.onDLSuccess(tracksOut);
+				UI.displayList( DraftFetcher.state, tracksOut );
 			}).catch( function(e) {
 				UI.displayError("Something went wrong: " + e.message);
 			});
 
 	}
-	return this;
-})();
 
-var TimelineView = (function() {
+var TimelineView = TimelineView || {};
 
-	var d = document, _ = this, tl = d.getElementById("timeline");
 
-	this.clearView = function() {
-		tl.innerHTML = "";
+	TimelineView.container = d.getElementById("timeline");
+
+	TimelineView.clearView = function() {
+		TimelineView.container.innerHTML = "";
 	}
 
-	this.toggleRegionDisplay = function(key, state) {
+	TimelineView.toggleRegionDisplay = function(key, state) {
 		var regions = d.querySelectorAll('div[data-region-name="'+key+'"]');
 		[].forEach.call(regions, function(item) {
 			if(state) {
@@ -458,38 +542,50 @@ var TimelineView = (function() {
 		});
 	}
 
-	this.viewData = function(json) {
-		_.clearView();
+	TimelineView.displayData = function(json) {
+		TimelineView.clearView();
 		var total = json.timeInfo.durationInTicks;
 		var k = 0;
 
+		// Iterating Channels
 		for (j = 0 ; j < json.timeline.tracks.length; j++) {
-			//Iterating through each channel
-			if ( json.timeline.tracks[j].type == 1  ) {
+
+			// Discard everything but NoteRegions
+			if ( json.timeline.tracks[j].type == 1 ) {
 				var block = json.timeline.tracks[j].content.items;
+
+				// Iterating NoteRegions
 				for (i = 0 ; i < block.length ; i++  ) {
-					//Through each block
+
 					var blockDOM = d.createElement("div"),
-						bs 		 = blockDOM.style;
+						bs 		 = blockDOM.style,
+						regionKey = block[i].contentBox;
 
-					var regionKey = block[i].contentBox
-					//Display
+					// Append Label TextNode to NoteRegions
 					blockDOM.appendChild(d.createTextNode(block[i].name));
-					blockDOM.setAttribute("data-region-name", regionKey);
-					bs.backgroundColor = "#"+block[i].color.toString(16);
-					bs.left = (block[i].position/total)*100 + "%";
-					bs.top = 10 + (k*25) + "px";
-					bs.width = (block[i].duration/total)*100 + "%";
 
-					//Listen
-					(function(z,k) { 
+					// Metadata
+					blockDOM.setAttribute("data-region-name", regionKey);
+
+					// Stylize and Positioning
+						// DEC -> HEX color provided in the format
+						bs.backgroundColor = "#"+block[i].color.toString(16);
+						// Position calculated by tickTime
+						bs.left  = (block[i].position/total)*100 + "%";
+						// 10 pixel top padding and 25px regionHeight
+						bs.top 	 = 10 + (k*25) + "px";
+						// Similar to position
+						bs.width = (block[i].duration/total)*100 + "%";
+
+					// addEventListener to NoteRegions
+					(function(z,key) { 
 						z.addEventListener("click", function() { 
-							var regionState = App.toggleRegion(k);
-							TimelineView.toggleRegionDisplay(k, regionState);
+							var regionState = App.toggleRegion(key);
+							TimelineView.toggleRegionDisplay(key, regionState);
 						})
 					})(blockDOM, regionKey);
 
-					tl.appendChild(blockDOM);
+					TimelineView.container.appendChild(blockDOM);
 				}
 				k++;
 			}
@@ -497,23 +593,16 @@ var TimelineView = (function() {
 			
 	}
 
-	return this;
-})();
+var App = App || {};
+	
+	App.currentJSON = {};
+	App.regions = [];
 
-var App = (function() {
-	var d = document, _ = this;
-	var currentJSON;
-	var regions = [];
-
-	this.setCurrentJSON = function(x) {
-		regions = [];
-		if(x instanceof Object) currentJSON = x;
-	}
-	this.getCurrentJSON = function() {
+	App.getCurrentJSON = function() {
 		return currentJSON;
 	}
 
-	this.toggleRegion = function(regionKey) {
+	App.toggleRegion = function(regionKey) {
 		if( regions.indexOf(regionKey) == -1 ) {
 			regions.push(regionKey);
 			return true;
@@ -523,25 +612,22 @@ var App = (function() {
 		}
 	}
 
-	this.getRegions = function() {
-		return regions;
-	}
-
-	this.fetchJSON = function(key) {
-		var session = User.getAuthKey();
-		fetch("https://api.audiotool.com/track/"+key+"/session.json?X-Cular-Session="+session)
+	App.fetchJSON = function(key) {
+		fetch("https://api.audiotool.com/track/"+key+"/session.json?X-Cular-Session="+ User.getAuthKey() )
 			.then( function( response ) {
-				return response.json()
+				return response.json();
 			}).then ( function(json) {
-				_.setCurrentJSON(json);
-				TimelineView.viewData(json);
+				// Clear regions, set new JSON and display
+				App.regions = [];
+				App.currentJSON = json;
+				TimelineView.displayData(json);
 			}).catch( function(e) {
 				UI.displayError("Something went wrong :O " + e.message);
 				throw new Error(e);
 			});
 	}
 
-	this.saveMIDI = function() {
+	App.saveMIDI = function() {
 		if( regions.length == 0 ) {
 			UI.displayError("You must choose at least one region to export!"); 
 			return;
@@ -549,22 +635,25 @@ var App = (function() {
 
 		var file = new Midi.File();
 
-		//Set Tempo
+		// Set Tempo
 		file.addTrack().setTempo(currentJSON.timeInfo.bpm);
 
-		//Through Each Audiotool Track
+		// Through Each Audiotool Track
 		for( var i = 0; i < regions.length; i++ ) {
-			var audiotoolTrack = currentJSON.timeline.contents.findIndex( function(el) { return el.contentBox==regions[i];} );
+			var audiotoolTrack = currentJSON.timeline.contents.findIndex(function(el) { return el.contentBox==regions[i]; });
 
 			var thisRegion = currentJSON.timeline.contents[audiotoolTrack];
 			
 			var events = [];
 
-			//Through Each Note
+			// Through Each Note
 			for( var j = 0; j < thisRegion.items.length; j++) { 
 				var note = thisRegion.items[j];
+
+				// Disregard all notes started before the noteRegion starts
 				if( note.position < 0 ) continue;
-				//Note ON
+
+				// Note ON
 				events.push({
 					type: Midi.Event.NOTE_ON,
 					channel: i,
@@ -572,7 +661,7 @@ var App = (function() {
 					param2: parseInt(note.velocity*127),
 					time: note.position,
 				});
-				//Note OFF
+				// Note OFF
 				events.push({
 					type: Midi.Event.NOTE_OFF,
 					channel: i,
@@ -582,11 +671,11 @@ var App = (function() {
 				});
 			}
 
-			//Sort Events
+			// Sort Events
 			events.sort(function(a, b) {
 			  return a.time - b.time;
 			});
-			//Relative Time
+			// Relative Time
 			events = events.map( function(it, ind, arr) { 
 				var prev = (arr[ind-1] !== undefined)? arr[ind-1].time : 0;
 				return new Midi.Event({
@@ -604,7 +693,7 @@ var App = (function() {
 		saveAs( new Blob([ new Uint8Array([].map.call(file.toBytes(), function(c) { return c.charCodeAt(0); })).buffer], {type: "application/x-midi"}) , UI.getFileName()+".mid" );
 	}
 
-	this.init = function() {
+	App.init = function() {
 		User.checkAuth();
 		d.getElementById("allBtn").addEventListener("click", UI.listAll);
 		d.getElementById("draftBtn").addEventListener("click", UI.listDrafts);
@@ -615,8 +704,6 @@ var App = (function() {
 			e.preventDefault();
 		})
 	}
-	return this;
-})();
 
 App.init();
 
