@@ -2,48 +2,53 @@
 <html>
 <head>
 	<title>Audiotool MIDI Export</title>
+	<meta charset="utf-8">
+	<meta name="viewport"  content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="hsla(227, 50%, 60%, 1)" />
 	<link href='./css/grid.bootstrap.min.css' rel='stylesheet' type='text/css'>
-	<link href='https://fonts.googleapis.com/css?family=Rambla:400,700italic,700' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,700' rel='stylesheet' type='text/css'>
 	<script type="text/javascript" src="./libs/jsmidgen.js"></script>
 	<script type="text/javascript" src="./libs/FileSaver.min.js"></script>
 	<style>
+	::selection {
+	    background: hsla(227, 50%, 80%, 0.8);;
+	}
 	::-webkit-scrollbar {
-		width: .7em; background: #333; border-radius: 5px;
+		width: .7em; background: hsla(156, 45%, 80%, 1);
 	}
 	::-webkit-scrollbar-thumb {
-		background: rgba(255,255,255,0.4);
-		border-radius: 5px; border: #333 solid 2px;
+		background: hsla(227, 50%, 60%, 1);
+		border-radius: 5px; border: hsla(156, 45%, 80%, 1) solid 2px;
 	}
 	input:-webkit-autofill {
-	    box-shadow: #444 0 0 0 18px inset !important;
-	    -webkit-text-fill-color: white !important;
+	    box-shadow: hsla(227, 50%, 60%, 1) 0 0 0 18px inset;
+	    -webkit-text-fill-color: hsla(227, 50%, 60%, 1);
+	}
+	::-webkit-input-placeholder {
+   		color: hsla(227, 50%, 30%, 0.7);
 	}
 
-	.main { 
-		background: #484848;
-		color: white;
-		font-family: 'Rambla', sans-serif;
+	html,.main { 
+		background: hsla(156, 45%, 80%, 1);
+		color: hsla(227, 50%, 60%, 1);
+		font-family: 'Josefin Sans', sans-serif;
 	}
 
 	#banner {
-		font-weight: 800; font-style: italic; 
-		font-size: 500%; text-align: center;
+		font-weight: 800;
+		font-size: 350%; text-align: center;
 		padding-top: 50px; padding-bottom: 50px;
-		text-shadow: #333 2px 2px, #222 4px 4px ;
+		text-shadow: hsla(227, 50%, 50%, 0.8) 0px 2px, hsla(227, 50%, 40%, 0.6) 0px 4px ;
 	}
 
 	h1 {
-		text-align: center; font-size: 300% !important;
-	}
-
-	#trackList {
-		border-left: 1px solid rgba(255,255,255,0.4);
-		margin-bottom: 25px;
+		text-align: center; font-size: 250%; 
+		text-shadow: hsla(227, 50%, 50%, 0.8) 0px 1px, hsla(227, 50%, 40%, 0.6) 0px 2px ;
 	}
 
 	#auth input[type="text"], #auth input[type="password"], #fileName {
-		background: transparent; color: #eee; width: 100%;
-		border: none; border-radius: 0px;  border-bottom: 2px solid #eee;
+		background: transparent; color: hsla(227, 50%, 40%, 1); width: 100%;
+		border: none; border-radius: 0px;  border-bottom: 2px solid hsla(227, 50%, 60%, 1);
 		padding: 3px 15px; font-size: 125%;
 		margin: 2px auto;
 		transition: .25s all ease;
@@ -51,25 +56,38 @@
 
 	#auth input[type="text"]:focus, #auth input[type="password"]:focus, #fileName:focus {
 		outline: none;
-		box-shadow: #fff 0 0 0px 0px;
+	}
+
+	.ccirc { background: hsla(227, 50%, 60%, 1); height: 1px; 
+		border-left: 15px hsla(156, 45%, 80%, 1) solid;
+		border-right: 15px hsla(156, 45%, 80%, 1) solid;
+	}
+
+	.arrowdown { margin-top: 49.5px; margin-bottom: 49.5px; }
+	.arrowdown:before { content: "➤"; position: absolute; left:50%; transform: rotateZ(90deg);
+		background: hsla(227, 50%, 60%, 1); box-shadow: hsla(227, 50%, 40%, 1) 1px 0px; border-radius:50%;
+		width:50px; height:50px; 
+		margin-left:-25px; margin-top:-25px;
+		text-align:center; line-height: 16.67px; padding:16.67px;
+		text-shadow: hsla(156, 45%, 50%, 1) 2px 0px; color: hsla(156, 45%, 80%, 1); 
+	}
+
+	.slashes { margin-top: 15px; margin-bottom: 15px; }
+	.slashes:before { content: "///"; font-size: 30px;
+		line-height: 30px; height: 30px; width: 30px;
+		margin-left:-15px; margin-top:-15px;
+		position: absolute; left:50%; text-align: center;
 	}
 
 	.btn {
 		margin: 10px auto; width: 100%;
-		background: #eee; color: #222; border-radius: 5px; 
-		border: none; padding: 3px 5px; font-size: 125%;
-		box-shadow: #333 0 5px 2px 0; transition: .25s all ease;
-	}
-
-	.btn.active {
-		background: #6f6;
-	}
-	.btn.active:hover {
-		background: #Fb6;
+		background: hsla(227, 50%, 60%, 1); color: hsla(156, 45%, 80%, 1); border-radius: 5px; 
+		border: none; padding: 3px 5px; font-size: 125%; font-weight: bold;
+		box-shadow: hsla(227, 50%, 30%, 0.8) 0 3px; transition: .25s all ease;
 	}
 
 	.btn:hover {
-		box-shadow: #333 0 3px 3px 0;
+		box-shadow: hsla(227, 50%, 30%, 0.9) 0 2px;
 	}
 
 	.btn:focus {
@@ -77,26 +95,27 @@
 	}
 
 	.tab {
-		background: rgba(255,255,255,0.6); color: #222; text-align: center; border-top-left-radius: 5px; border-top-right-radius: 5px;
-		font-size: 125%; cursor: pointer; transition: .25s all ease;
+		background: hsla(227, 50%, 60%, 0.7); color: hsla(156, 45%, 80%, 1); text-align: center; border-top-left-radius: 5px; border-top-right-radius: 5px;
+		font-size: 125%; font-weight: bold; cursor: pointer; transition: .25s all ease;
 	}
 	.tab:not(.active):hover {
-		background: rgba(255,255,255,0.8); 
+		background: hsla(227, 50%, 60%, 0.9); 
 	}
 	.tab.active {
-		background: rgba(255,255,255,1); box-shadow: #333 0px -3px 5px 0; cursor: default;
+		background: hsla(227, 50%, 60%, 1); cursor: default; 
 	}
 
 	#list {
 		height: 200px; border-radius: 5px; border-top-left-radius: 0; border-top-right-radius:0;
-		border: 5px white solid;
-		background: #333; overflow-y: scroll; overflow-x:hidden;
-		box-shadow: #333 0 4px 3px 0;
+		border: 5px hsla(227, 50%, 60%, 1) solid;
+		background: hsla(227, 50%, 30%, 1); 
+		overflow-y: scroll; overflow-x:hidden;
+		box-shadow: hsla(227, 50%, 40%, 1) 0 3px ;
 	}
 	#list li {
-		list-style: none; background: rgba(255,255,255,0.1);
+		list-style: none; background: rgba(255,255,255,0.1); color: hsla(227, 50%, 90%, 1);
 		margin:2px 0px; cursor: pointer;
-		padding:2px 10px;
+		padding:2px 10px; font-family: monospace;
 		transition: .2s all ease;
 	}
 	#list li:hover {
@@ -104,13 +123,13 @@
 	}
 
 	#timeline {
-		height: 500px; margin: 10px auto; overflow-y: scroll;
-		background: #333; position: relative; border-radius: 5px;
+		height: 500px; margin: 10px auto; overflow-y: auto;
+		background: hsla(227, 50%, 30%, 1); position: relative; border-radius: 5px;
 	}
 
 	#timeline div {
-		color: #222; position: absolute; height: 25px; border: rgba(20,20,20, 0.8) 1px solid; box-sizing: border-box;
-		white-space: nowrap; text-overflow: ellipsis; overflow: hidden; padding: 0 3px;
+		color: #222; position: absolute; height: 25px; border: rgba(20,20,20, 0.8) 0.5px solid; box-sizing: border-box;
+		white-space: nowrap; text-overflow: ellipsis; overflow: hidden; padding: 0 3px; font-family: monospace;
 		transition: .2s all ease; cursor: pointer;
 	}
 	#timeline div.active {
@@ -121,7 +140,7 @@
 	}	
 
 	#saveBtn {
-		font-size:175%; padding: 30px;
+		font-size: 175%; padding: 30px; font-weight: 800;
 	}
 	#saveWrapper {
 		margin-top: 50px; margin-bottom: 50px;
@@ -133,36 +152,33 @@
 		border-bottom-width: 5px;
 	}
 	#ext {
-		padding: 3px 15px;
+		padding: 3px 15px; text-align: center;
 	}
 	</style>
 </head>
 <body>
 <div class="col-md-12 main">
 	<div id="banner" class="col-md-12">
-			AUDIOTOOL MIDI EXPORT
+		AUDIOTOOL MIDI EXPORT
 	</div>
+	<div class="ccirc slashes col-md-6 col-md-offset-3"></div>
 	<div id="firstSteps" class="col-md-12">
-		<div id="auth" class="col-md-6">
+		<div id="auth" class="col-md-4 col-md-offset-4">
 			<h1>AUTHENTICATE</h1>
-			<div class="col-md-4 col-md-offset-4">
 				<form id="login" autocomplete="off">
-					<input id="uname" name="username" type="text" placeholder="Your Username"><br>
+					<input id="uname" name="username" type="text" placeholder="Your Username" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><br>
 					<input id="passwd" name="password" type="password" placeholder="Password"><br>
-					<input id="loginBtn" class="btn" type="button" value="LOGIN">
+					<input id="loginBtn" class="btn" type="submit" value="LOG IN" onclick="void(0)">
 				</form>
-			</div>
 		</div>
-		<div id="trackList"class="col-md-6">
+		<div class="ccirc arrowdown col-md-4 col-md-offset-4" ></div>
+		<div id="trackList"class="col-md-4 col-md-offset-4">
 			<h1>CHOOSE TRACK</h1>
-			<div class="col-md-6 col-md-offset-3">
-				<div id="allBtn" class="active tab col-md-6" >PUBLISHED</div>
-				<div id="draftBtn" class="tab col-md-6">DRAFTS</div><br>
-				<div id="list">
-					
-				</div>
-			</div>
+				<div id="allBtn" class="active tab col-md-6 col-xs-6" >PUBLISHED</div>
+				<div id="draftBtn" class="tab col-md-6 col-xs-6">DRAFTS</div><br>
+				<div id="list"></div>
 		</div>
+		<div class="ccirc arrowdown col-md-4 col-md-offset-4" ></div>
 	</div>
 	<div class="col-md-12" style="text-align:center;">
 		<h1> CHOOSE REGIONS TO EXPORT </h1>	
@@ -210,28 +226,19 @@ var UI = (function() {
 		setTimeout( function() { d.body.removeChild(el); }, 2000);
 	}
 
-	this.loginBtnLogOut = function() { loginBtn.value = "LOGOUT?"; }
-	this.loginBtnLoggedIn = function() { loginBtn.value = "LOGGED IN"; }
-
-	this.showLoggedIn = function() { console.log("show logged in")
+	this.showLoggedIn = function() { 
 		d.getElementById("uname").value = User.getUsername();
-		loginBtn.value = "LOGGED IN";
-		loginBtn.classList.add( "active" ); 
+		loginBtn.value = "LOG OUT";
 		loginBtn.removeEventListener("click", User.authenticate); 
-		loginBtn.addEventListener("mouseover", _.loginBtnLogOut);
-		loginBtn.addEventListener("mouseout", _.loginBtnLoggedIn);
 		loginBtn.addEventListener("click", User.logOut);
 		_.listAll();
 	}
 
 	this.showLoggedOut = function() {
 		d.getElementById("uname").value = "";
-		loginBtn.value = "LOGIN";
-		loginBtn.classList.remove( "active" ); 
+		loginBtn.value = "LOG IN";
 		loginBtn.removeEventListener("click", User.logOut);
-		loginBtn.removeEventListener("mouseover", _.loginBtnLogOut);
-		loginBtn.removeEventListener("mouseout", _.loginBtnLoggedIn);
-		loginBtn.addEventListener("click",User.authenticate);
+		loginBtn.addEventListener("click", User.authenticate);
 	}
 
 	this.clearList = function() {
@@ -299,7 +306,7 @@ var User = (function() {
 		UI.displayError(txt);
 	}
 
-	this.onSuccess = function() { console.log("user on success");
+	this.onSuccess = function() { 
 		UI.showLoggedIn();
 		//Clear fields
 		document.getElementById("passwd").value = "";
@@ -319,7 +326,7 @@ var User = (function() {
 		return localStorage.AMELoginUsername;
 	}
 
-	this.checkAuth = function() { console.log("checkAuth");
+	this.checkAuth = function() { 
 		if(_.isLoggedIn()) {
 			UI.showLoggedIn(); 
 		} else {
@@ -328,13 +335,13 @@ var User = (function() {
 	}
 
 	this.logOut = function() {
-		console.log("User logged out.");
 		window.localStorage.removeItem("AMELoginKey");
 		window.localStorage.removeItem("AMELoginUsername");
 		UI.showLoggedOut();
 	}
 
-	this.authenticate = function() { console.log("authing");
+	this.authenticate = function(e) { 
+
 		var form = new FormData( document.getElementById("login") );
 		var parser = new DOMParser();
 
@@ -376,7 +383,7 @@ var DraftList = (function() {
 		return state;
 	}
 
-	this.onDLSuccess = function(x) { console.log("DraftList Success");
+	this.onDLSuccess = function(x) { 
 		UI.loadList(state, x);
 	}
 
@@ -458,7 +465,7 @@ var TimelineView = (function() {
 
 		for (j = 0 ; j < json.timeline.tracks.length; j++) {
 			//Iterating through each channel
-			if ( json.timeline.tracks[j].type == 1 ) {
+			if ( json.timeline.tracks[j].type == 1  ) {
 				var block = json.timeline.tracks[j].content.items;
 				for (i = 0 ; i < block.length ; i++  ) {
 					//Through each block
@@ -602,6 +609,11 @@ var App = (function() {
 		d.getElementById("allBtn").addEventListener("click", UI.listAll);
 		d.getElementById("draftBtn").addEventListener("click", UI.listDrafts);
 		d.getElementById("saveBtn").addEventListener("click", UI.saveMIDIDisplay);
+
+		//Prevent FormSubmit
+		d.getElementById("login").addEventListener("submit", function(e) {
+			e.preventDefault();
+		})
 	}
 	return this;
 })();
