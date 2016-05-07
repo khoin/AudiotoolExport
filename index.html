@@ -189,17 +189,47 @@
 	}
 	#list li:hover {	background: rgba(255,255,255,0.3); }
 
-	#timeline
+	#timelineTracks
+	{
+		height 		: 500px; 
+		background 	: hsla(227, 30%, 30%, 1);
+		position 	: relative;
+		margin 		: 10px auto;
+		padding 	: 0;
+		border-radius: 5px;
+		border-top-right-radius		: 0;
+		border-bottom-right-radius	: 0;
+		overflow-y 	: auto;
+	}
+
+	#timelineTracks>div
+	{
+		position: absolute;
+		height 	: 25px;
+		width 	: 100%;
+		color	: hsla(227, 30%, 80%, 1);
+		padding : 0 10px;
+		border-top 		: rgba(250,250,250, 0.2) 0.5px solid;
+		white-space 	: nowrap;
+		text-overflow 	: ellipsis;
+		overflow 		: hidden;
+		font-family 	: monospace;
+		transition 	: .2s all ease; 
+	}
+
+	#timelineItems
 	{
 		height 		: 500px; 
 		background 	: hsla(227, 50%, 30%, 1);
 		position 	: relative;
 		margin 		: 10px auto;
 		border-radius: 5px;
+		border-top-left-radius		: 0;
+		border-bottom-left-radius	: 0;
 		overflow-y 	: auto;
 	}
 
-	#timeline div
+	#timelineItems div
 	{
 		color 		: #222;
 		position 	: absolute;
@@ -214,12 +244,12 @@
 		cursor 		: pointer;
 		transition 	: .2s all ease; 
 	}
-	#timeline div.active
+	#timelineItems div.active
 	{
 		border: #222 2px dotted;
 		cursor: no-drop;
 	}
-	#timeline div:hover { 	opacity: 0.8; }	
+	#timelineItems div:hover { opacity: 0.8; }	
 
 	#saveBtn
 	{
@@ -275,7 +305,8 @@
 		<h1> CHOOSE REGIONS TO EXPORT </h1>	
 	</div>
 	<div id="timeline" class="col-md-12">
-
+		<div id="timelineTracks" class="col-md-1 "></div>
+		<div id="timelineItems"  class="col-md-11"></div>
 	</div>
 	<br>
 	<div id="output" class="col-md-12">
@@ -487,7 +518,7 @@ var DraftFetcher = DraftFetcher || {};
 
 				var response = parser.parseFromString(body, "text/xml");
 
-				if(state === 0 ) { //All
+				if (state === 0 ) { //All
 
 					[].forEach.call( response.getElementsByTagName("track"), function(it) {
 						var obj = {
@@ -525,10 +556,12 @@ var DraftFetcher = DraftFetcher || {};
 var TimelineView = TimelineView || {};
 
 
-	TimelineView.container = d.getElementById("timeline");
+	TimelineView.container 		= d.getElementById("timelineItems");
+	TimelineView.trackLabels 	= d.getElementById("timelineTracks");
 
 	TimelineView.clearView = function() {
 		TimelineView.container.innerHTML = "";
+		TimelineView.trackLabels.innerHTML = "";
 	}
 
 	TimelineView.toggleRegionDisplay = function(key, state) {
@@ -545,37 +578,50 @@ var TimelineView = TimelineView || {};
 	TimelineView.displayData = function(json) {
 		TimelineView.clearView();
 		var total = json.timeInfo.durationInTicks;
+		//Filter Tracks Counter
 		var k = 0;
 
-		// Iterating Channels
+		var trackNames = {}; 
+
+		//Iterating Plugins Looking for Their Names
+		for ( var i=0; i < json.plugins.length; i++ ) trackNames[json.plugins[i].plugin.box] = json.plugins[i].plugin.displayName;
+
+		// Iterating Tracks
 		for (j = 0 ; j < json.timeline.tracks.length; j++) {
 
 			// Discard everything but NoteRegions
 			if ( json.timeline.tracks[j].type == 1 ) {
-				var block = json.timeline.tracks[j].content.items;
+				
+				//Insert TrackNames
+				var trackDOM = d.createElement("div");
+					trackDOM.style.top = 10 + (k*25) + "px";
+				trackDOM.appendChild(d.createTextNode(trackNames[json.timeline.tracks[j].pluginModelBox]));
 
-				// Iterating NoteRegions
-				for (i = 0 ; i < block.length ; i++  ) {
+				TimelineView.trackLabels.appendChild(trackDOM);
+
+				var blocks 		= json.timeline.tracks[j].content.items;
+				// Iterating NoteBlockRegions
+				for (i = 0 ; i < blocks.length ; i++  ) {
 
 					var blockDOM = d.createElement("div"),
 						bs 		 = blockDOM.style,
-						regionKey = block[i].contentBox;
+						regionKey= blocks[i].contentBox;
 
 					// Append Label TextNode to NoteRegions
-					blockDOM.appendChild(d.createTextNode(block[i].name));
+					blockDOM.appendChild(d.createTextNode(blocks[i].name));
 
 					// Metadata
 					blockDOM.setAttribute("data-region-name", regionKey);
 
 					// Stylize and Positioning
 						// DEC -> HEX color provided in the format
-						bs.backgroundColor = "#"+block[i].color.toString(16);
-						// Position calculated by tickTime
-						bs.left  = (block[i].position/total)*100 + "%";
+						bs.backgroundColor = "#"+blocks[i].color.toString(16);
+						// X-Position calculated by tickTime
+						bs.left  = (blocks[i].position/total)*100 + "%";
 						// 10 pixel top padding and 25px regionHeight
 						bs.top 	 = 10 + (k*25) + "px";
 						// Similar to position
-						bs.width = (block[i].duration/total)*100 + "%";
+						bs.width = (blocks[i].duration/total)*100 + "%";
 
 					// addEventListener to NoteRegions
 					(function(z,key) { 
@@ -599,15 +645,15 @@ var App = App || {};
 	App.regions = [];
 
 	App.getCurrentJSON = function() {
-		return currentJSON;
+		return App.currentJSON;
 	}
 
 	App.toggleRegion = function(regionKey) {
-		if( regions.indexOf(regionKey) == -1 ) {
-			regions.push(regionKey);
+		if( App.regions.indexOf(regionKey) == -1 ) {
+			App.regions.push(regionKey);
 			return true;
 		} else {
-			regions.splice(regions.indexOf(regionKey), 1);
+			App.regions.splice(App.regions.indexOf(regionKey), 1);
 			return false;
 		}
 	}
@@ -628,7 +674,7 @@ var App = App || {};
 	}
 
 	App.saveMIDI = function() {
-		if( regions.length == 0 ) {
+		if( App.regions.length == 0 ) {
 			UI.displayError("You must choose at least one region to export!"); 
 			return;
 		}
@@ -636,13 +682,13 @@ var App = App || {};
 		var file = new Midi.File();
 
 		// Set Tempo
-		file.addTrack().setTempo(currentJSON.timeInfo.bpm);
+		file.addTrack().setTempo( App.currentJSON.timeInfo.bpm );
 
 		// Through Each Audiotool Track
-		for( var i = 0; i < regions.length; i++ ) {
-			var audiotoolTrack = currentJSON.timeline.contents.findIndex(function(el) { return el.contentBox==regions[i]; });
+		for( var i = 0; i < App.regions.length; i++ ) {
+			var audiotoolTrack =  App.currentJSON.timeline.contents.findIndex(function(el) { return el.contentBox == App.regions[i]; });
 
-			var thisRegion = currentJSON.timeline.contents[audiotoolTrack];
+			var thisRegion = App.currentJSON.timeline.contents[audiotoolTrack];
 			
 			var events = [];
 
