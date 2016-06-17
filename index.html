@@ -214,7 +214,18 @@
 		text-overflow 	: ellipsis;
 		overflow 		: hidden;
 		font-family 	: monospace;
-		transition 	: .2s all ease; 
+		transition 	: .2s all ease;
+		cursor: pointer;
+	}
+
+	#timelineTracks>div:hover
+	{
+		background: rgba(255,255,255,0.1);
+	}
+
+	#timelineTracks>div.active
+	{
+		background: rgba(255,255,255,0.2);
 	}
 
 	#timelineItems
@@ -302,7 +313,8 @@
 		<div class="ccirc arrowdown col-md-4 col-md-offset-4" ></div>
 	</div>
 	<div class="col-md-12" style="text-align:center;">
-		<h1> CHOOSE REGIONS TO EXPORT </h1>	
+		<h1> CHOOSE REGIONS TO EXPORT </h1>
+		<h2> YOU CHOSE <span id="trackCount">0</span> TRACKS AND <span id="regionCount">0</span> TO EXPORT </h2>
 	</div>
 	<div id="timeline" class="col-md-12">
 		<div id="timelineTracks" class="col-md-1 "></div>
@@ -415,7 +427,15 @@ var UI = UI || {};
 			});
 			UI.listDiv.appendChild(item);
 		})
-	};
+	}
+
+	UI.updateTrackCount = function(n) {
+		d.getElementById("trackCount").textContent = parseInt(n);
+	}
+
+	UI.updateRegionCount = function(n) {
+		d.getElementById("regionCount").textContent = parseInt(n);
+	}	
 
 	UI.getFileName = function() {
 		return UI.fieldFileName.value;
@@ -573,6 +593,7 @@ var TimelineView = TimelineView || {};
 				item.classList.remove("active");
 			}
 		});
+
 	}
 
 	TimelineView.displayData = function(json) {
@@ -628,6 +649,7 @@ var TimelineView = TimelineView || {};
 						z.addEventListener("click", function() { 
 							var regionState = App.toggleRegion(key);
 							TimelineView.toggleRegionDisplay(key, regionState);
+							UI.updateRegionCount(App.regions.length);
 						})
 					})(blockDOM, regionKey);
 
@@ -716,11 +738,17 @@ var App = App || {};
 					time: note.position + note.duration,
 				});
 			}
-
-			// Sort Events
+			
+			// Sort Events By Time, Ascending.
+			// If events are of same pitch, and same time; NOTE_OFF will be put before NOTE_ON
 			events.sort(function(a, b) {
-			  return a.time - b.time;
+				if(a.param1 == b.param1 && a.time == b.time) {
+			  		return a.type - b.type;
+			  	} else {
+			  		return a.time - b.time;
+			  	}
 			});
+
 			// Relative Time
 			events = events.map( function(it, ind, arr) { 
 				var prev = (arr[ind-1] !== undefined)? arr[ind-1].time : 0;
@@ -732,6 +760,7 @@ var App = App || {};
 					time: it.time - prev,
 				});
 			});
+			
 			//Add to Track
 			file.addTrack( new Midi.Track({events: events}) );
 		}
