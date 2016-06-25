@@ -14,7 +14,7 @@ Here are the libraries that helped in the development of this small app:
 
 # Overview
 
-## Authenticate > Choose Project > Choose Regions > Choose Options > Save! 
+** Authenticate > Choose Project > Choose Regions > Choose Options > Save! ** 
 
 * **MIDI**: You have to choose note regions before exporting to MIDI. Maximum of 16 can be chosen as MIDI limits to 16 tracks. 
 * **LMMS**: You can save your project entirely to LMMS without choosing note regions. Currently, only note tracks are exported and Pulverisateur patches will be translated to OSCx3 of LMMS as close as possible. The output file type is `.mmp` not `.mmpz` so it is uncompressed. However, you can just open it in LMMS and save it under `.mmpz`.
