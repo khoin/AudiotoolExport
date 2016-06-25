@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Audiotool MIDI Export</title>
+	<title>Audiotool Export</title>
 	<meta charset="utf-8">
 	<meta name="viewport"  content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="hsla(227, 50%, 60%, 1)" />
@@ -191,6 +191,11 @@
 	}
 	#list li:hover {	background: rgba(255,255,255,0.3); }
 
+	#timeline 
+	{
+		transition: .5s all ease;
+	}
+
 	#timelineTracks
 	{
 		height 		: 600px; 
@@ -319,12 +324,35 @@
 		padding 	: 3px 15px;
 		text-align	: center;
 	}
+
+	footer 
+	{
+		margin 		: 50px 0;
+		font-size 	: 150%;
+		font-weight : 600;
+		text-align	: center;
+	}
+
+	footer a 
+	{
+		text-decoration : none;
+		color 			: hsl(227, 50%, 60%);
+		transition 		: .1s all ease;
+		border-bottom 	: 2px solid hsl(227, 50%, 60%);
+	}
+
+	footer a:hover 
+	{
+		text-decoration : none;
+		border-bottom 	: 4px solid hsl(227, 50%, 60%);
+	}
+
 	</style>
 </head>
 <body>
 <div class="col-md-12 main">
 	<div id="banner" class="col-md-12">
-		AUDIOTOOL MIDI EXPORT
+		AUDIOTOOL EXPORT
 	</div>
 	<div class="ccirc slashes col-md-6 col-md-offset-3"></div>
 	<div id="firstSteps" class="col-md-12">
@@ -375,6 +403,9 @@
 			</div>
 			<input id="saveBtn" class="btn" type="button" value="SAVE MIDI">
 		</div>
+		<footer class="col-md-12">
+			Made with ♥ by <a href="http://kh01.me">Potasmic</a> &middot; <a href="https://github.com/khoin/ATMidExport">Fork me on GitHub</a>
+		</footer>
 	</div>
 </div>
 
@@ -456,7 +487,7 @@ var UI = UI || {};
 		return "["+ Math.floor((duration/1000)/60) + ":" + wew + Math.floor((duration/1000)%60) +"] [" +key+ "] " + title;
 	}
 
-	UI.listAll = function(n) { 
+	UI.listAll = function(n) { console.log("b");
 		if( !User.isLoggedIn() ) {
 			list.innerHTML = "<li> You must log in first! </li>";
 			UI.shakeElement(UI.buttonLogin); return;
@@ -467,7 +498,7 @@ var UI = UI || {};
 		UI.tabDrafts.classList.remove("active");
 	}
 
-	UI.listDrafts = function(n) {
+	UI.listDrafts = function(n) { console.log("a");
 		if( !User.isLoggedIn() ) {
 			list.innerHTML = "<li> You must log in first! </li>";
 			UI.shakeElement(UI.buttonLogin); return;
@@ -616,6 +647,7 @@ var DraftFetcher = DraftFetcher || {};
 						"https://api.audiotool.com/browse/user/"+ User.getUsername() +"/tracks/?limit=128" : 
 						"https://api.audiotool.com/tracks/mine/?limit=128";
 		
+		UI.listDiv.innerHTML = "<li>Loading...</li>";
 		fetch( basedURI+"&X-Cular-Session="+ User.getAuthKey() )
 			.then( function(response) {
 				return response.text();
@@ -660,7 +692,7 @@ var DraftFetcher = DraftFetcher || {};
 
 var TimelineView = TimelineView || {};
 
-
+	TimelineView.wrapper 		= d.getElementById("timeline");
 	TimelineView.container 		= d.getElementById("timelineItems");
 	TimelineView.trackLabels 	= d.getElementById("timelineTracks");
 
@@ -769,6 +801,7 @@ var App = App || {};
 		}
 
 	App.fetchJSON = function(key) {
+		TimelineView.wrapper.style.webkitFilter = TimelineView.wrapper.style.mozFilter =TimelineView.wrapper.style.filter = "blur(5px)";
 		fetch("https://api.audiotool.com/track/"+key+"/session.json?X-Cular-Session="+ User.getAuthKey() )
 			.then( function( response ) {
 				return response.json();
@@ -780,6 +813,7 @@ var App = App || {};
 				App.regions = [];
 				App.currentJSON = json;
 				TimelineView.displayData(json);
+				TimelineView.wrapper.style.webkitFilter = TimelineView.wrapper.style.mozFilter =TimelineView.wrapper.style.filter = "blur(0px)";
 			}); /**.catch( function(e) {
 				UI.displayError("UI Error: " + e.message);
 				throw new Error(e);
@@ -840,7 +874,7 @@ var App = App || {};
 				if ( NotableDevices[App.Util.reduceToInt(currentTrack.pluginModelBox)].type.substr(0,4) == "pulv" ) {
 					var currentParams = NotableDevices[App.Util.reduceToInt(currentTrack.pluginModelBox)].parameters;
 					var MMPInstrumentTrack = MMPFile.createElement("instrumenttrack");
-						MMPInstrumentTrack.setAttribute("basenote"	, 66); // Keep it as default
+						MMPInstrumentTrack.setAttribute("basenote"	, 69); // Keep it as default
 						MMPInstrumentTrack.setAttribute("fxch"		, 0);
 						MMPInstrumentTrack.setAttribute("pitchrange", 1);
 						instrParam("linear", "pitch"		, ~~(currentParams[56].value*1200), MMPInstrumentTrack, currentParams[56].box);
@@ -950,7 +984,6 @@ var App = App || {};
 			}
 		}
 		saveAs( new Blob([ (new XMLSerializer()).serializeToString(MMPFile)], {type: "text/xml"}) , UI.getFileName()+".mmp" );
-		
 	}
 
 	App.saveMIDI = function() {
