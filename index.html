@@ -8,6 +8,7 @@
 	<link href='./css/grid.bootstrap.min.css' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,700' rel='stylesheet' type='text/css'>
 	<script type="text/javascript" src="./libs/jsmidgen.js"></script>
+	<script type="text/javascript" src="./libs/initialdoc.js"></script>
 	<script type="text/javascript" src="./libs/FileSaver.min.js"></script>
 	<style>
 	::selection {    background: hsla(227, 50%, 80%, 0.8); }
@@ -52,13 +53,14 @@
 					  hsla(227, 50%, 40%, 0.6) 0px 4px;
 	}
 
-	h1
+	h1, h2, h3, h4, h5
 	{
 		text-align: center;
-		font-size: 250%; 
 		text-shadow: hsla(227, 50%, 50%, 0.8) 0px 1px,
 					 hsla(227, 50%, 40%, 0.6) 0px 2px;
 	}
+
+	h1 { font-size: 250%; }
 
 	#auth input[type="text"], 
 	#auth input[type="password"], 
@@ -191,7 +193,7 @@
 
 	#timelineTracks
 	{
-		height 		: 500px; 
+		height 		: 600px; 
 		background 	: hsla(227, 30%, 30%, 1);
 		position 	: relative;
 		margin 		: 10px auto;
@@ -230,7 +232,7 @@
 
 	#timelineItems
 	{
-		height 		: 500px; 
+		height 		: 600px; 
 		background 	: hsla(227, 50%, 30%, 1);
 		position 	: relative;
 		margin 		: 10px auto;
@@ -261,6 +263,37 @@
 		cursor: no-drop;
 	}
 	#timelineItems div:hover { opacity: 0.8; }	
+
+	input[type=radio] 
+	{
+		display: none;
+	}
+
+	input[type=radio]+label 
+	{
+		font-size	 	: 25px;
+		font-weight		: bold;
+		line-height 	: 25px;
+		margin  		: 5px 0 5px 25%;
+		cursor 			: pointer;
+	}
+
+	input[type=radio]+label:before
+	{
+		content 		: "";
+		box-shadow		: inset hsla(227, 50%, 60%, 1) 0 0 0 4px;
+		display 		: inline-block;
+		height 			: 19px;
+		width 			: 19px;
+		margin 			: 0 25px 0 -25px;
+		border-radius 	: 5px;
+		transition 		: .25s all ease;
+	}
+
+	input[type=radio]:checked+label:before 
+	{
+		box-shadow		: inset hsla(227, 50%, 60%, 1) 0 0 0 15px;
+	}
 
 	#saveBtn
 	{
@@ -313,8 +346,8 @@
 		<div class="ccirc arrowdown col-md-4 col-md-offset-4" ></div>
 	</div>
 	<div class="col-md-12" style="text-align:center;">
-		<h1> CHOOSE REGIONS TO EXPORT </h1>
-		<h2> YOU CHOSE <span id="trackCount">0</span> TRACKS AND <span id="regionCount">0</span> TO EXPORT </h2>
+		<h1> CHOOSE NOTE-REGIONS TO EXPORT </h1>
+		<h2> YOU CHOSE <span id="trackCount"></span><span id="regionCount">0</span> REGIONS TO EXPORT </h2>
 	</div>
 	<div id="timeline" class="col-md-12">
 		<div id="timelineTracks" class="col-md-1 "></div>
@@ -322,6 +355,17 @@
 	</div>
 	<br>
 	<div id="output" class="col-md-12">
+		<div id="modeWrapper" class="col-md-4 col-md-offset-4">
+			<div class="col-md-12" style="text-align:center;">
+				<h1> EXPORT TO </h1>
+			</div>
+			<div class="col-md-12">
+				<input type="radio" name="exportTo" value="MIDI" id="radioMIDI" checked>
+				<label id="optionMIDI" for="radioMIDI" class="col-md-12 col-xs-12"> MIDI </label>
+				<input type="radio" name="exportTo" value="LMMS" id="radioLMMS">
+				<label id="optionLMMS" for="radioLMMS" class="col-md-12 col-xs-12"> LMMS </label>
+			</div>
+		</div>
 		<div id="saveWrapper" class="col-md-4 col-md-offset-4">
 			<div class="col-md-10">
 				<input id="fileName" type="text" value="" placeholder="fileName">
@@ -343,6 +387,8 @@ var UI = UI || {};
 	UI.fieldFileName= d.getElementById("fileName");
 	UI.tabPublished = d.querySelectorAll("#trackList .tab")[0];
 	UI.tabDrafts 	= d.querySelectorAll("#trackList .tab")[1];
+	UI.fileExtension= d.getElementById("ext");
+	UI.buttonSave	= d.getElementById("saveBtn");
 
 	UI.shakeElement = function(el) {
 		var k = 20;
@@ -354,15 +400,36 @@ var UI = UI || {};
 		})();
 	}
 
+	UI.replaceText = function(element, prop, text) {
+		if (element["_replacing"]) { return; } else {
+			element["_replacing"] = true;
+		}
+
+		var z = 1;
+		function _b() {
+			if ( element[prop].length !== text.length ) {
+				element[prop] = text.substr(0,z++);
+				setTimeout(_b, 17);
+			} else { element["_replacing"] = false; return; }
+		};
+
+		(function _a() { 
+			if ( element[prop].length !== 0 ) {
+				element[prop] = element[prop].substr(1);
+				setTimeout(_a, 17);
+			} else { _b(); }
+		})();
+	}
+
 	UI.displayError = function(text) {
-		var el = d.createElement("div"), 
-			els = el.style;
-			els.position = "fixed";
-			els.color = "white"; els.background = "#f44"; els.padding = "10px 30px"; els.fontSize = "20px"; els.width = "100%"; els.opacity = 0.8;
-			els.top = els.left = 0;
+		var el = d.createElement("div");
+			Object.assign(el.style, {
+				color: "white", background: "#f44", padding: "10px 30px", fontSize: "20px", width: "100%",
+				opacity: 0.8, top: 0, left: 0, position: "fixed"
+			});
 			el.textContent = text;
 		d.body.appendChild(el);
-		setTimeout( function() { d.body.removeChild(el); }, 2000);
+		setTimeout( function() { d.body.removeChild(el); }, 2500);
 	}
 
 	UI.showLoggedIn = function() { 
@@ -437,13 +504,31 @@ var UI = UI || {};
 		d.getElementById("regionCount").textContent = parseInt(n);
 	}	
 
+	UI.applyExportOption = function(e) { 
+		if ( e.target.previousElementSibling.value == App.exportOption ) return;
+		if ( e.target.previousElementSibling.value == "LMMS" ) {
+			UI.replaceText(UI.fileExtension,"textContent", ".MMP");
+			UI.replaceText(UI.buttonSave, "value", "SAVE LMMS Project");
+			App.exportOption = "LMMS";
+		} else {
+			UI.replaceText(UI.fileExtension,"textContent", ".MID");
+			UI.replaceText(UI.buttonSave, "value", "SAVE MIDI");
+			App.exportOption = "MIDI";
+		}
+	}
+
 	UI.getFileName = function() {
 		return UI.fieldFileName.value;
 	}
 
-	UI.saveMIDIDisplay = function() {
+	UI.saveFileDisplay = function() {
 		if( UI.getFileName() == "" ) { UI.shakeElement(UI.fieldFileName); return; }
-		App.saveMIDI();
+		if( App.exportOption == "MIDI" ) {
+			if( App.regions.length > 16 ) { UI.displayError("Sorry. But only 16 regions maximum for now."); return; }
+			App.saveMIDI();
+		} else if ( App.exportOption = "LMMS" ) {
+			App.saveMMP();
+		}
 	}
 
 
@@ -599,8 +684,6 @@ var TimelineView = TimelineView || {};
 	TimelineView.displayData = function(json) {
 		TimelineView.clearView();
 		var total = json.timeInfo.durationInTicks;
-		//Filter Tracks Counter
-		var k = 0;
 
 		var trackNames = {}; 
 
@@ -609,42 +692,45 @@ var TimelineView = TimelineView || {};
 
 		// Iterating Tracks
 		for (j = 0 ; j < json.timeline.tracks.length; j++) {
+			//Insert TrackNames
+			var trackDOM = d.createElement("div"),
+				isChild = ( j > 0 && j < json.timeline.tracks.length-1
+						 		  && json.timeline.tracks[j].pluginModelBox == json.timeline.tracks[j-1].pluginModelBox 
+						 		  && json.timeline.tracks[j].pluginModelBox == json.timeline.tracks[j+1].pluginModelBox )? 
+					"├─" :( j > 0 && json.timeline.tracks[j].pluginModelBox == json.timeline.tracks[j-1].pluginModelBox )?
+					"└─" : "";
+				trackDOM.style.top = 10 + (j*25) + "px";
+			//DOM insert
+			trackDOM.appendChild(d.createTextNode(isChild + trackNames[json.timeline.tracks[j].pluginModelBox]));
 
-			// Discard everything but NoteRegions
-			if ( json.timeline.tracks[j].type == 1 ) {
-				
-				//Insert TrackNames
-				var trackDOM = d.createElement("div");
-					trackDOM.style.top = 10 + (k*25) + "px";
-				trackDOM.appendChild(d.createTextNode(trackNames[json.timeline.tracks[j].pluginModelBox]));
+			TimelineView.trackLabels.appendChild(trackDOM);
 
-				TimelineView.trackLabels.appendChild(trackDOM);
+			var blocks 		= json.timeline.tracks[j].content.items;
+			// Iterating Regions
+			for (i = 0 ; i < blocks.length ; i++  ) {
 
-				var blocks 		= json.timeline.tracks[j].content.items;
-				// Iterating NoteBlockRegions
-				for (i = 0 ; i < blocks.length ; i++  ) {
+				var blockDOM = d.createElement("div"),
+					bs 		 = blockDOM.style,
+					regionKey= blocks[i].contentBox;
 
-					var blockDOM = d.createElement("div"),
-						bs 		 = blockDOM.style,
-						regionKey= blocks[i].contentBox;
+				// Append Label TextNode to NoteRegions
+				blockDOM.appendChild(d.createTextNode(blocks[i].name));
 
-					// Append Label TextNode to NoteRegions
-					blockDOM.appendChild(d.createTextNode(blocks[i].name));
+				// Metadata
+				blockDOM.setAttribute("data-region-name", regionKey);
 
-					// Metadata
-					blockDOM.setAttribute("data-region-name", regionKey);
+				// Stylize and Positioning
+					// DEC -> HEX color provided in the format
+					bs.backgroundColor = "#"+blocks[i].color.toString(16);
+					// X-Position calculated by tickTime
+					bs.left  = (blocks[i].position/total)*100 + "%";
+					// 10 pixel top padding and 25px regionHeight
+					bs.top 	 = 10 + (j*25) + "px";
+					// Similar to position
+					bs.width = (blocks[i].duration/total)*100 + "%";
 
-					// Stylize and Positioning
-						// DEC -> HEX color provided in the format
-						bs.backgroundColor = "#"+blocks[i].color.toString(16);
-						// X-Position calculated by tickTime
-						bs.left  = (blocks[i].position/total)*100 + "%";
-						// 10 pixel top padding and 25px regionHeight
-						bs.top 	 = 10 + (k*25) + "px";
-						// Similar to position
-						bs.width = (blocks[i].duration/total)*100 + "%";
-
-					// addEventListener to NoteRegions
+				// addEventListener to ONLY NoteRegions
+				if ( json.timeline.tracks[j].type == 1 ) {
 					(function(z,key) { 
 						z.addEventListener("click", function() { 
 							var regionState = App.toggleRegion(key);
@@ -652,10 +738,9 @@ var TimelineView = TimelineView || {};
 							UI.updateRegionCount(App.regions.length);
 						})
 					})(blockDOM, regionKey);
-
-					TimelineView.container.appendChild(blockDOM);
 				}
-				k++;
+
+				TimelineView.container.appendChild(blockDOM);
 			}
 		}
 			
@@ -664,11 +749,8 @@ var TimelineView = TimelineView || {};
 var App = App || {};
 	
 	App.currentJSON = {};
+	App.exportOption = "MIDI";
 	App.regions = [];
-
-	App.getCurrentJSON = function() {
-		return App.currentJSON;
-	}
 
 	App.toggleRegion = function(regionKey) {
 		if( App.regions.indexOf(regionKey) == -1 ) {
@@ -680,19 +762,195 @@ var App = App || {};
 		}
 	}
 
+	App.Util = App.Util || {};
+		
+		App.Util.reduceToInt = function(str) {
+			return str.split("").map(function(a){return a.charCodeAt(0);}).reduce(function(a,b){return a+b;});
+		}
+
 	App.fetchJSON = function(key) {
 		fetch("https://api.audiotool.com/track/"+key+"/session.json?X-Cular-Session="+ User.getAuthKey() )
 			.then( function( response ) {
 				return response.json();
+			}).catch( function(e) {
+				UI.displayError("Fetch Error: " + e.message);
+				throw new Error(e);
 			}).then ( function(json) {
 				// Clear regions, set new JSON and display
 				App.regions = [];
 				App.currentJSON = json;
 				TimelineView.displayData(json);
-			}).catch( function(e) {
-				UI.displayError("Something went wrong :O " + e.message);
+			}); /**.catch( function(e) {
+				UI.displayError("UI Error: " + e.message);
 				throw new Error(e);
-			});
+			});**/
+	}
+
+	App.saveMMP = function() {
+		
+		// Util
+		var instrParam = function(scale, name, value, parent, ID) {
+			var param = document.createElement(name);
+				if (ID) param.setAttribute("id", App.Util.reduceToInt(ID));
+				param.setAttribute("scale_type", scale);
+				param.setAttribute("value", value);
+			parent.appendChild(param);
+		}
+
+		//Check if currentJSON is null or not
+		if( !App.currentJSON.timeInfo ) {
+			return UI.displayError("Please open a project first!");
+		}
+
+		var MMPFile = (new DOMParser()).parseFromString(MMP_INITIAL_DOC, "text/xml");
+		
+		//Set Global Variables
+		//Includes: TimeSignature, BPM, Loopsection
+		MMPFile.getElementsByTagName("head")[0].setAttribute("bpm", App.currentJSON.timeInfo.bpm );
+		MMPFile.getElementsByTagName("head")[0].setAttribute("timesig_numerator", 	 App.currentJSON.timeInfo.signatureUpper );
+		MMPFile.getElementsByTagName("head")[0].setAttribute("timesig_denominator", App.currentJSON.timeInfo.signatureLower );
+		//Loop Section
+		MMPFile.getElementsByTagName("timeline")[0].setAttribute("lp0pos", parseInt(App.currentJSON.timeInfo.loopStart/80) );
+		MMPFile.getElementsByTagName("timeline")[0].setAttribute("lp1pos", parseInt(App.currentJSON.timeInfo.loopEnd/80)   );
+		MMPFile.getElementsByTagName("timeline")[0].setAttribute("lpstate", ~~App.currentJSON.timeInfo.loopEnabled );
+
+		// Collect Pulv tracks
+		var NotableDevices = [];
+
+		for ( var i=0; i < App.currentJSON.plugins.length; i++ ) {
+			var currentPlugin = App.currentJSON.plugins[i];
+			if ( ["heis","pulv","mach","beat","tone"].indexOf(currentPlugin.resource.substr(0,4)) !== -1 ) 
+				NotableDevices[App.Util.reduceToInt(currentPlugin.plugin.box)] =
+				{
+					boxID : currentPlugin.plugin.box,
+					name  : currentPlugin.plugin.displayName,
+					type  : currentPlugin.resource,
+					parameters: currentPlugin.plugin.processor.parameters
+				};
+		}
+
+		// Iterate Note Tracks
+		for ( var i=0; i < App.currentJSON.timeline.tracks.length; i++ ) {
+			var currentTrack = App.currentJSON.timeline.tracks[i];
+			if ( currentTrack.type == 1 ) {
+				//create MMP Track (includes instrumentrack & patterns)
+				var MMPTrack = MMPFile.createElement("track");
+					MMPTrack.setAttribute("name", NotableDevices[App.Util.reduceToInt(currentTrack.pluginModelBox)].name );
+
+				if ( NotableDevices[App.Util.reduceToInt(currentTrack.pluginModelBox)].type.substr(0,4) == "pulv" ) {
+					var currentParams = NotableDevices[App.Util.reduceToInt(currentTrack.pluginModelBox)].parameters;
+					var MMPInstrumentTrack = MMPFile.createElement("instrumenttrack");
+						MMPInstrumentTrack.setAttribute("basenote"	, 66); // Keep it as default
+						MMPInstrumentTrack.setAttribute("fxch"		, 0);
+						MMPInstrumentTrack.setAttribute("pitchrange", 1);
+						instrParam("linear", "pitch"		, ~~(currentParams[56].value*1200), MMPInstrumentTrack, currentParams[56].box);
+						instrParam("linear", "vol"			, ~~(currentParams[55].value*80) , MMPInstrumentTrack, currentParams[55].box);
+					// I lowered the master volume above. 
+					//Oscillators : The first and second oscillators are crossed to achieve OSC syncing.
+					var MMPInstrument = MMPFile.createElement("instrument");
+						MMPInstrument.setAttribute("name", "tripleoscillator");
+					var MMPTripleOscillator = MMPFile.createElement("tripleoscillator");
+						//Osc 1 --> Osc2
+						var Osc1Volume = (currentParams[0].value == true)? ~~(currentParams[2].value*100) : 0;
+						instrParam("linear", "pan1"		, ~~(currentParams[1].value*100) , MMPTripleOscillator, currentParams[1].box );
+						instrParam("linear", "vol1"		, Osc1Volume 					 , MMPTripleOscillator, currentParams[2].box );
+						instrParam("linear", "finel1"	, ~~(currentParams[3].value*1200), MMPTripleOscillator, currentParams[3].box );
+						instrParam("linear", "finer1"	, ~~(currentParams[3].value*1200), MMPTripleOscillator, currentParams[3].box*2);
+						instrParam("linear", "course1"	, ~~(currentParams[4].value*12)  , MMPTripleOscillator, currentParams[4].box );
+						instrParam("linear", "wavetype1",Math.round(currentParams[5].value*3), MMPTripleOscillator, currentParams[5].box );
+						//Osc 2 --> Osc1
+						var Osc2Volume = (currentParams[6].value == true)? ~~(currentParams[8].value*100) : 0;
+						instrParam("linear", "pan0"		, ~~(currentParams[7].value*100) , MMPTripleOscillator, currentParams[7].box );
+						instrParam("linear", "vol0"		, Osc2Volume 					 , MMPTripleOscillator, currentParams[8].box );
+						instrParam("linear", "finel0"	, ~~(currentParams[9].value*1200), MMPTripleOscillator, currentParams[9].box );
+						instrParam("linear", "finer0"	, ~~(currentParams[9].value*1200), MMPTripleOscillator, currentParams[9].box*2);
+						instrParam("linear", "course0"	, ~~(currentParams[10].value*12) , MMPTripleOscillator, currentParams[10].box );
+						instrParam("linear", "wavetype0",Math.round(currentParams[11].value*3), MMPTripleOscillator, currentParams[11].box );
+						//Osc 3 --> Osc 3
+						var Osc3Volume = (currentParams[13].value == true)? ~~(currentParams[15].value*100) : 0;
+						instrParam("linear", "pan2"	, ~~(currentParams[14].value*100) , MMPTripleOscillator, currentParams[14].box );
+						instrParam("linear", "vol2"	, Osc3Volume 					  , MMPTripleOscillator, currentParams[15].box );
+						instrParam("linear", "finel2"	, ~~(currentParams[16].value*1200), MMPTripleOscillator, currentParams[16].box );
+						instrParam("linear", "finer2"	, ~~(currentParams[16].value*1200), MMPTripleOscillator, currentParams[16].box*2);
+						instrParam("linear", "course2"	, ~~(currentParams[17].value*12)  , MMPTripleOscillator, currentParams[17].box );
+						instrParam("linear", "wavetype2",Math.round(currentParams[18].value*3), MMPTripleOscillator, currentParams[18].box );
+
+					// OSC Syncing
+					instrParam("linear", "modalgo1", 2 + ~~currentParams[12].value , MMPTripleOscillator, currentParams[12].box );
+					// Filters (Lo-pass only) & Envelopes 
+					var MMPEnvLFOData = MMPFile.createElement("eldata");
+						// Lowpass + Filter always on 
+						instrParam("linear", "ftype", 0, MMPEnvLFOData);
+						instrParam("linear", "fwet" , 1, MMPEnvLFOData);
+						// Cut-off and resonance
+						instrParam("linear", "fcut" , 1 + ~~(currentParams[29].value*13999), MMPEnvLFOData, currentParams[29].box);
+						instrParam("linear", "fres" , ~~(currentParams[31].value*1000)/100, MMPEnvLFOData, currentParams[31].box);
+						// Filter Envelope
+						var MMPFilterEnvelope = MMPFile.createElement("elcut");
+							MMPFilterEnvelope.setAttribute("hold", 0);
+							instrParam("linear", "amt", ~~(currentParams[48].value*1000)/1000, MMPFilterEnvelope, currentParams[48].box);
+							instrParam("linear", "att", ~~(Math.sqrt(currentParams[43].value/220500)*10)/10, MMPFilterEnvelope, currentParams[43].box);
+							instrParam("linear", "dec", ~~(Math.sqrt(currentParams[44].value/220500)*10)/10, MMPFilterEnvelope, currentParams[44].box);
+							instrParam("linear", "rel", ~~(Math.sqrt(currentParams[46].value/220500)*10)/10, MMPFilterEnvelope, currentParams[46].box);
+							instrParam("linear", "sustain", ~~(currentParams[45].value*100)/100, MMPFilterEnvelope, currentParams[45].box);
+						//  Amplitude Envelope
+						var MMPAmplitudeEnvelope = MMPFile.createElement("elvol");
+							MMPAmplitudeEnvelope.setAttribute("amt", 1);
+							MMPAmplitudeEnvelope.setAttribute("hold", 0);
+							instrParam("linear", "att", ~~(Math.sqrt(currentParams[49].value/220500)*10)/10, MMPAmplitudeEnvelope, currentParams[43].box);
+							instrParam("linear", "dec", ~~(Math.sqrt(currentParams[50].value/220500)*10)/10, MMPAmplitudeEnvelope, currentParams[44].box);
+							instrParam("linear", "rel", ~~(Math.sqrt(currentParams[52].value/220500)*10)/10, MMPAmplitudeEnvelope, currentParams[46].box);
+							instrParam("linear", "sustain", ~~(currentParams[51].value*100)/100, MMPAmplitudeEnvelope, currentParams[45].box);
+
+							MMPEnvLFOData.appendChild(MMPFilterEnvelope);
+							MMPEnvLFOData.appendChild(MMPAmplitudeEnvelope);
+						MMPInstrument.appendChild(MMPTripleOscillator);
+						MMPInstrumentTrack.appendChild(MMPEnvLFOData);
+						MMPInstrumentTrack.appendChild(MMPInstrument);
+					MMPTrack.appendChild(MMPInstrumentTrack);
+				}
+
+				// Patterns/Regions & Notes
+				for ( var j=0; j < currentTrack.content.items.length; j++ ) {
+					var currentRegion = currentTrack.content.items[j];
+					//create MMP pattern (Audiotool NoteRegion)
+					var MMPPattern = MMPFile.createElement("pattern");
+						MMPPattern.setAttribute("type", 1 );
+						MMPPattern.setAttribute("step", 128 );
+						MMPPattern.setAttribute("name", currentRegion.name );
+						MMPPattern.setAttribute("len" , parseInt(currentRegion.duration/80) );
+						MMPPattern.setAttribute("pos" , parseInt(currentRegion.position/80) );
+
+					//Traverse ContentBoxes and Insert notes
+					for ( var k=0,found=0; found !== 1; k++ ) {
+						var currentContentBox = App.currentJSON.timeline.contents[k];
+						if( currentContentBox.contentBox == currentRegion.contentBox ) {
+							//Traverse through the notes of that contentBox if its name matches with the contentBox in the track
+							for ( var q = 0; q < currentContentBox.items.length; q++ ) {
+								var currentNote = currentContentBox.items[q];
+								//Creates Note element	
+								var MMPNote = MMPFile.createElement("note");
+									MMPNote.setAttribute("pan", 0);
+									MMPNote.setAttribute("key", currentNote.note);
+									MMPNote.setAttribute("vol", parseInt(currentNote.velocity*200));
+									MMPNote.setAttribute("pos", parseInt(currentNote.position/80) );
+									MMPNote.setAttribute("len", parseInt(currentNote.duration/80) );
+
+								MMPPattern.appendChild(MMPNote);
+							}
+
+							found = 1;
+						}
+					}
+					
+					MMPTrack.appendChild(MMPPattern); 
+				}
+
+				MMPFile.getElementsByTagName("trackcontainer")[0].appendChild(MMPTrack);
+			}
+		}
+		saveAs( new Blob([ (new XMLSerializer()).serializeToString(MMPFile)], {type: "text/xml"}) , UI.getFileName()+".mmp" );
+		
 	}
 
 	App.saveMIDI = function() {
@@ -706,11 +964,11 @@ var App = App || {};
 		// Set Tempo
 		file.addTrack().setTempo( App.currentJSON.timeInfo.bpm );
 
-		// Through Each Audiotool Track
+		// Through Each Audiotool Region
 		for( var i = 0; i < App.regions.length; i++ ) {
-			var audiotoolTrack =  App.currentJSON.timeline.contents.findIndex(function(el) { return el.contentBox == App.regions[i]; });
+			var regionIndex =  App.currentJSON.timeline.contents.findIndex(function(el) { return el.contentBox == App.regions[i]; });
 
-			var thisRegion = App.currentJSON.timeline.contents[audiotoolTrack];
+			var thisRegion = App.currentJSON.timeline.contents[regionIndex];
 			
 			var events = [];
 
@@ -751,7 +1009,7 @@ var App = App || {};
 
 			// Relative Time
 			events = events.map( function(it, ind, arr) { 
-				var prev = (arr[ind-1] !== undefined)? arr[ind-1].time : 0;
+				var prev = (arr[ind-1])? arr[ind-1].time : 0;
 				return new Midi.Event({
 					type: it.type,
 					channel: it.channel,
@@ -760,7 +1018,7 @@ var App = App || {};
 					time: it.time - prev,
 				});
 			});
-			
+
 			//Add to Track
 			file.addTrack( new Midi.Track({events: events}) );
 		}
@@ -772,7 +1030,9 @@ var App = App || {};
 		User.checkAuth();
 		d.getElementById("allBtn").addEventListener("click", UI.listAll);
 		d.getElementById("draftBtn").addEventListener("click", UI.listDrafts);
-		d.getElementById("saveBtn").addEventListener("click", UI.saveMIDIDisplay);
+		d.getElementById("saveBtn").addEventListener("click", UI.saveFileDisplay);
+		d.getElementById("optionLMMS").addEventListener("click", UI.applyExportOption);
+		d.getElementById("optionMIDI").addEventListener("click", UI.applyExportOption);
 
 		//Prevent FormSubmit
 		d.getElementById("login").addEventListener("submit", function(e) {

@@ -1,3 +1,5 @@
+// Author: https://github.com/dingram/jsmidgen
+
 var Midi = {};
 
 (function(exported) {
